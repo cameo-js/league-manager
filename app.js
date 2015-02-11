@@ -4,6 +4,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var swig = require('swig')
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
@@ -11,8 +12,12 @@ var users = require('./routes/users');
 var app = express();
 
 // view engine setup
+app.engine('html', swig.renderFile);
+app.set('view engine', 'html');
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+app.set('view cache', false);
+// To disable Swig's cache, do the following:
+swig.setDefaults({ cache: false });
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(__dirname + '/public/favicon.ico'));
