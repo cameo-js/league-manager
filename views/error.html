@@ -1,8 +1,8 @@
-{% extends 'layout.html' %}
+{% extends 'default_layout.html' %}
 
 {% block content %}
-<h1>{{ message }}</h1>
-
-<h2>{{ error.status }}</h2>
-<pre>{{error.stack}}</pre>
+<div class="container-fluid">
+  <h1>{{error.status}} {{error.message}} </h1>
+  <pre>{{error.stack}}</pre>
+</div>
 {% endblock %}
