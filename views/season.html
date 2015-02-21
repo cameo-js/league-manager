@@ -2,11 +2,10 @@
 
 {% block content %}
 <div class="container-fluid">
-  <p>Welcome to {{title}}</p>
-
   <div class="row">
     <div class="col-md-6 col-sm-6">
-      <a href="/games/1"><h4>daumkakao league <small>standings</small></h4></a>
+      {% for game in games %}
+      <a href="/games/{{game.id}}"><h4>{{game.gameName}} <small>standings</small></h4></a>
       <table class="table table-hover table-bordered">
         <thead>
         <tr>
@@ -32,33 +31,7 @@
         </tbody>
         <tfoot></tfoot>
       </table>
-
-      <a href="/games/2"><h4>dk champions league <small>standings</small></h4></a>
-      <table class="table table-hover table-bordered">
-        <thead>
-        <tr>
-          <th class="text-left">#</th>
-          <th class="text-left">Team</th>
-          <th class="text-left">P</th>
-          <th class="text-left">W</th>
-          <th class="text-left">D</th>
-          <th class="text-left">L</th>
-          <th class="text-left">Pts</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-          <td>1</td>
-          <td class="right">arsenal</td>
-          <td class="right">38</td>
-          <td class="right">38</td>
-          <td class="right">0</td>
-          <td class="right">0</td>
-          <td class="right">114</td>
-        </tr>
-        </tbody>
-        <tfoot></tfoot>
-      </table>
+      {% endfor %}
     </div>
     <div class="col-md-6 col-sm-6">
       <h4>Match talks</h4>

@@ -16,7 +16,17 @@ var models = require("../models");
 var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
-models.sequelize.sync().then(function () {
+models.sequelize.sync({ force : true }).then(function () {
+
+  /* 테스트용 데이터 */
+  models.Season.create( { seasonName : '15-16 Season' } ).complete( function( err, season ){
+      models.Game.create( { gameName : 'DK League', gameType : 'full-league', numOfTeams: 12 } ).complete( function( err, game ){
+        season.setGames( [ game ] );
+      });
+  });
+  /* 테스트용 데이터 */
+
+
   var server = http.createServer(app);
   server.listen(port);
   server.on('error', onError);

@@ -1,1 +1,1 @@
-DEBUG=league-manager:* ./bin/www
+DEBUG=league-manager:* NODE_ENV=development ./bin/www

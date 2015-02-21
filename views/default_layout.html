@@ -32,7 +32,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="/">15-16 Season</a>
+      <a class="navbar-brand" href="/">{{season.seasonName}}</a>
     </div>
 
     <!-- Collect the nav links, forms, and other content for toggling -->
@@ -42,9 +42,9 @@
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Games <span class="caret"></span></a>
           <ul class="dropdown-menu" role="menu">
             <!-- 현재 시즌에 등록된 게임들을 보여준다. -->
-            <li><a href="/games/1">DaumKakao 리그</a></li>
-            <li><a href="/games/2">챔피언스 리그</a></li>
-            <li><a href="/games/3">마리오 컵</a></li>
+            {% for game in games %}
+            <li><a href="/games/{{game.id}}">{{game.gameName}}</a></li>
+            {% endfor %}
             <li class="divider"></li>
             <li><a href="/games/new">Create Game.</a></li>
           </ul>
