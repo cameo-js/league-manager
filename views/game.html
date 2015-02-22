@@ -28,10 +28,11 @@
 <script>
   $(function () {
     // game page variables
-    var gameId = {{gameId}};
+    var seasonId = {{season.id}};
+    var gameId = {{game.id}};
     // game page variables
 
-    render_standings( gameId );
+    render_standings( seasonId, gameId );
 
     $('#game-menu a').click(function (e) {
       e.preventDefault();
@@ -39,9 +40,9 @@
     });
   });
 
-  function render_standings( gameId ){
+  function render_standings( seasonId, gameId ){
     var template = _.template( $("#game_standings_tpl").html() );
-    LM.api.games.getStandings( gameId, function( data ){
+    LM.api.games.getStandings( seasonId, gameId, function( data ){
       $('#standings').html( template(data) );
       $('#game-menu a[href="#standings"]').tab('show')
     });

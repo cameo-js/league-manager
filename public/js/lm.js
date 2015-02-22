@@ -45,9 +45,8 @@
 
   LM.api = {};
   LM.api.games = {
-    url: "/games",
-    getStandings : function ( gameId, success) {
-      return LM.service.callGET(LM.api.games.url + '/' + gameId + '/standings', {}, success );
+    getStandings : function ( seasonId, gameId, success) {
+      return LM.service.callGET('/seasons/' + seasonId + '/games/' + gameId + '/standings', {}, success );
     }
   };
 
