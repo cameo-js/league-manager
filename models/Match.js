@@ -2,18 +2,19 @@
 
 module.exports = function (sequelize, DataTypes) {
   var Match = sequelize.define("Match", {
-    group : DataTypes.STRING,
-    round : DataTypes.INTEGER,
-    homePlayerId : DataTypes.INTEGER,
-    awayPlayerId : DataTypes.INTEGER,
-    homeScore : DataTypes.INTEGER,
-    awayScore : DataTypes.INTEGER,
-    review : DataTypes.TEXT,
-    reviewerId : DataTypes.STRING
+    group: {type: DataTypes.STRING, defaultValue: 'A'},
+    round: DataTypes.INTEGER,
+    status: {type: DataTypes.ENUM, values: ['open', 'close'], defaultValue: 'open'},
+    homeScore: DataTypes.INTEGER,
+    awayScore: DataTypes.INTEGER,
+    review: DataTypes.TEXT,
+    reviewerId: DataTypes.STRING
   }, {
     classMethods: {
       associate: function (models) {
-        Match.belongsTo(models.Game);
+        Match.belongsTo(models.Game, {as: 'game'});
+        Match.belongsTo(models.Player, {as: 'homePlayer'});
+        Match.belongsTo(models.Player, {as: 'awayPlayer'});
       }
     }
   });

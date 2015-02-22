@@ -4,7 +4,7 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  models.Season.findOne({ where : { states : 'open' }}).then(function( row ){
+  models.Season.findOne({ where : { status : 'open' }}).then(function( row ){
     res.redirect('/seasons/' + row.dataValues.id );
   });
 });
