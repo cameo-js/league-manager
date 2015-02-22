@@ -9,8 +9,6 @@ module.exports = function (sequelize, DataTypes) {
     updatedAt: false,
     classMethods: {
       associate: function (models) {
-        Game.belongsTo(models.Season);
-        Game.hasMany(models.Match);
         Game.hasMany(models.Player);
       }
     }

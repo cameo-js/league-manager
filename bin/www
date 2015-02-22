@@ -17,15 +17,9 @@ var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
 models.sequelize.sync({ force : true }).then(function () {
-
   /* 테스트용 데이터 */
-  models.Season.create( { seasonName : '15-16 Season' } ).complete( function( err, season ){
-      models.Game.create( { gameName : 'DK League', gameType : 'full-league', numOfTeams: 12 } ).complete( function( err, game ){
-        season.setGames( [ game ] );
-      });
-  });
+  createSeasonAndGame();
   /* 테스트용 데이터 */
-
 
   var server = http.createServer(app);
   server.listen(port);
@@ -66,6 +60,19 @@ models.sequelize.sync({ force : true }).then(function () {
       ? 'pipe ' + addr
       : 'port ' + addr.port;
     debug('Listening on ' + bind);
+  }
+
+  function createSeasonAndGame(){
+    models.Season.create( { seasonName : '15-16 Season' } ).complete( function( err, season ){
+        models.Game.create( { gameName : 'DK League', gameType : 'full-league', numOfTeams: 12 } ).complete( function( err, game ){
+          season.setGames( [ game ] );
+          for( var loop = 1 ; loop <= game.numOfTeams ; loop++ ){
+            models.Player.create( { playerName : 'noname-' + loop  } ).complete( function( err, player ) {
+              game.addPlayer( player );
+            });
+          }
+        });
+    });
   }
 });
 
