@@ -8,17 +8,19 @@ var app = require('../app');
 var debug = require('debug')('league-manager:server');
 var http = require('http');
 var models = require("../models");
+var _ = require("underscore");
 
 /**
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '3000');
+var port = normalizePort(process.env.HTTP_PORT || '3000');
 app.set('port', port);
 
 models.sequelize.sync({ force : true }).then(function () {
   /* 테스트용 데이터 */
   createSeasonAndGame();
+  createTeams();
   /* 테스트용 데이터 */
 
   var server = http.createServer(app);
@@ -64,16 +66,164 @@ models.sequelize.sync({ force : true }).then(function () {
 
   function createSeasonAndGame(){
     models.Season.create( { seasonName : '15-16 Season' } ).complete( function( err, season ){
-        models.Game.create( { gameName : 'DK League', gameType : 'full-league', numOfTeams: 12 } ).complete( function( err, game ){
+        models.Game.create( { gameName : 'DK League', gameType : 'full-league', numOfPlayers: 12 } ).complete( function( err, game ){
           season.setGames( [ game ] );
-          for( var loop = 1 ; loop <= game.numOfTeams ; loop++ ){
-            models.Player.create( { playerName : 'noname-' + loop  } ).complete( function( err, player ) {
-              game.addPlayer( player );
-            });
+          for( var loop = 1 ; loop < game.numOfPlayers ; loop++ ){
+            models.Player.create( { gameId: game.id, playerName : 'noname-' + loop  } );
           }
+          models.Player.create( { gameId: game.id, playerName : 'noname-' + game.numOfPlayers } ).complete(function( err, player ){
+            game.getPlayers().then( function( players ){
+              createGameSchedule( game, players );
+            });
+          });
         });
+
+        models.Game.create( { gameName : 'Nio League', gameType : 'full-league', numOfPlayers: 8 } ).complete( function( err, game ){
+          season.setGames( [ game ] );
+          for( var loop = 1 ; loop < game.numOfPlayers ; loop++ ){
+            models.Player.create( { gameId: game.id, playerName : 'noname-' + loop  } );
+          }
+          models.Player.create( { gameId: game.id, playerName : 'noname-' + game.numOfPlayers } ).complete(function( err, player ){
+            game.getPlayers().then( function( players ){
+              createGameSchedule( game, players );
+            });
+          });        });
     });
   }
+
+/*
+    schedule 만드는 방법 ( http://www.cutoutfoldup.com/1302-how-to-schedule-soccer-games.php )
+
+    1. match pair 생성. schedule circle 의 index 쌍. [ home, away ]
+    2. match pair 는 각 pair 의 distance 가 같지 않도록 구성한다. 위 레퍼런스 참고
+    2. match pair 는 고정된 값이며 schedule circle ( circuler queue 처럼 동작 ) 를 다이얼 돌리듯이 한칸씩 돌린(round) 후 match pair 로 match 추출
+*/
+  function createGameSchedule( game, players ){
+    var group = 'A';
+    var matches = [];     // models.Match.create( matches[?] )
+
+    var numOfPlayers = players.length;
+    var firstHalfMatchPair = [];
+    var secondHalfMatchPair = [];
+
+    // match pair 생성
+    for( var i = 0 ; i < numOfPlayers/2 ; i++ ){
+      if( i === 0 ){
+        firstHalfMatchPair.push( [ i, -1 ] );
+        secondHalfMatchPair.push( [ -1, i ]);
+      } else {
+        firstHalfMatchPair.push( [ i, numOfPlayers-(i+1) ] );
+        secondHalfMatchPair.push( [ numOfPlayers-(i+1), i ]);
+      }
+    }
+
+    // console.log( firstHalfMatchPair );
+    // console.log( secondHalfMatchPair );
+
+    var scheduleCircle = _.map( players, function( player ){
+      // TODO 적용할때는 player.id 로 변경한다
+      return player.id;
+    });
+    var scheduleCenter = scheduleCircle[numOfPlayers-1];
+    scheduleCircle = _.initial( scheduleCircle );
+
+    console.log( scheduleCircle ) ;
+
+    var schedules = [];
+    var totalRounds = numOfPlayers * 2 - 2;
+    var turn = totalRounds / 2;
+
+    var matches = [];
+    var round = 1;
+
+    var firstHalfRound1 = _.map( firstHalfMatchPair, function( pair ){
+      var homePlayer = scheduleCircle[pair[0]];
+      var awayPlayer = pair[1] < 0 ? scheduleCenter : scheduleCircle[pair[1]];
+      return { round: round, homePlayerId : homePlayer, awayPlayerId : awayPlayer };
+    })
+    _.each( firstHalfRound1, function( match ){
+      matches.push( match );
+    });
+
+    var secondHalfRound1 = _.map( secondHalfMatchPair, function( pair ){
+      var homePlayer = pair[0] < 0 ? scheduleCenter : scheduleCircle[pair[0]];
+      var awayPlayer = scheduleCircle[pair[1]];
+      return { round: round+turn, homePlayerId: homePlayer, awayPlayerId: awayPlayer };
+    })
+    _.each( secondHalfRound1, function( match ){
+      matches.push( match );
+    });
+
+    var last = numOfPlayers-2; // last index of circle
+
+    round++;
+    for( ; round <= turn ; round++ ){
+      //console.log( scheduleCircle );
+      //console.log( scheduleCircle[last] );
+
+      // right shift and last item insert to 0 index
+      // circle 을 시계방향으로 한번 돌린다.
+      scheduleCircle.splice(0, 0, scheduleCircle[last]);
+      scheduleCircle = _.initial( scheduleCircle );
+
+      var first = _.map( firstHalfMatchPair, function( pair ){
+        var homePlayer = scheduleCircle[pair[0]];
+        var awayPlayer = pair[1] < 0 ? scheduleCenter : scheduleCircle[pair[1]];
+        return { round: round, homePlayerId : homePlayer, awayPlayerId : awayPlayer };
+      })
+      _.each( first, function( match ){
+        matches.push( match );
+      });
+
+      //console.log( scheduleCircle );
+      //console.log( scheduleCircle[last] );
+      //console.log( first );
+
+      var second = _.map( secondHalfMatchPair, function( pair ){
+        var homePlayer = pair[0] < 0 ? scheduleCenter : scheduleCircle[pair[0]];
+        var awayPlayer = scheduleCircle[pair[1]];
+        return { round: round+turn, homePlayerId: homePlayer, awayPlayerId: awayPlayer };
+      })
+      _.each( second, function( match ){
+        matches.push( match );
+      });
+      //console.log( second );
+    }
+
+    var count = 3;
+    _.each( matches, function( values ){
+      models.Match.create( values ).complete( function( err, match ){
+       game.addMatch( match );
+       if( count === 3 )
+          match.update( { homeScore: 1, awayScore : 2, status: 'close' } );
+
+       if( count === 2 )
+          match.update( { homeScore: 1, awayScore : 1, status: 'close' } );
+
+       if( count === 1 )
+          match.update( { homeScore: 2, awayScore : 1, status: 'close' } );
+        count--;
+      });
+    })
+
+  }
+
+  function createTeams(){
+    models.Team.create( { teamName: '아스날', teamEmblem: '/images/emblem/arsenal.png' });
+    models.Team.create( { teamName: 'AC밀란', teamEmblem: '/images/emblem/acm.png' });
+    models.Team.create( { teamName: '바르샤', teamEmblem: '/images/emblem/barcelona.png' });
+    models.Team.create( { teamName: '뮌헨', teamEmblem: '/images/emblem/bm.png' });
+    models.Team.create( { teamName: '첼시', teamEmblem: '/images/emblem/chelsae.png' });
+    models.Team.create( { teamName: '맨시티', teamEmblem: '/images/emblem/mc.png' });
+    models.Team.create( { teamName: '맨유', teamEmblem: '/images/emblem/mu.png' });
+    models.Team.create( { teamName: 'PSG', teamEmblem: '/images/emblem/psg.png' });
+    models.Team.create( { teamName: '레알', teamEmblem: '/images/emblem/real.png' });
+    models.Team.create( { teamName: '유벤투스', teamEmblem: '/images/emblem/uven.png' });
+    models.Team.create( { teamName: '리옹', teamEmblem: '/images/emblem/olympique_lyonnais.png' });
+    models.Team.create( { teamName: '리버플', teamEmblem: '/images/emblem/liverpool.png' });
+    models.Team.create( { teamName: 'AT마드리드', teamEmblem: '/images/emblem/atm.png' });
+  }
+
 });
 
 /**

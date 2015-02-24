@@ -1,5 +1,5 @@
-<script id="game_standings_tpl" type="text/template">
-<table class="table table-hover">
+<script id="game_standings_mini_tpl" type="text/template">
+<table class="table table-hover table-bordered">
   <thead>
   <tr>
     <th class="text-left">#</th>
@@ -8,19 +8,16 @@
     <th class="text-left">W</th>
     <th class="text-left">D</th>
     <th class="text-left">L</th>
-    <th class="text-left">F</th>
-    <th class="text-left">A</th>
-    <th class="text-left">+/-</th>
     <th class="text-left">Pts</th>
   </tr>
   </thead>
   <tbody>
   <%
-  var rangking_tr_class = {
-  1: 'info',
-  2: 'warning',
-  3: 'success'
-  };
+    var rangking_tr_class = {
+      1: 'info',
+      2: 'warning',
+      3: 'success'
+    };
   %>
   <% _.each( standings, function( s, idx, list ){ %>
   <tr class="<%= rangking_tr_class[idx+1] %>">
@@ -30,9 +27,6 @@
     <td class="right"><%= s.win %></td>
     <td class="right"><%= s.draw %></td>
     <td class="right"><%= s.lost %></td>
-    <td class="right"><%= s.for %></td>
-    <td class="right"><%= s.against %></td>
-    <td class="right"><%= s.for - s.against %></td>
     <td class="right"><%= s.points %></td>
   </tr>
   <% }); %>
