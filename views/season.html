@@ -7,6 +7,7 @@
       {% for game in season.games %}
       <a href="/seasons/{{season.id}}/games/{{game.id}}"><h4>{{game.gameName}} <small>standings</small></h4></a>
       <div id="game-standings-{{game.id}}"></div>
+      <hr>
       {% endfor %}
     </div>
     <div class="col-md-6 col-sm-6">

@@ -15,9 +15,16 @@
   </tr>
   </thead>
   <tbody>
-  <% _.each( standings, function( s ){ %>
-  <tr>
-    <td>1</td>
+  <%
+  var rangking_tr_class = {
+  1: 'info',
+  2: 'warning',
+  3: 'success'
+  };
+  %>
+  <% _.each( standings, function( s, idx, list ){ %>
+  <tr class="<%= rangking_tr_class[idx+1] %>">
+    <td><%= idx+1 %></td>
     <td class="right"><a href="/teams/1"><%= s.playerName %></a></td>
     <td class="right"><%= s.played %></td>
     <td class="right"><%= s.win %></td>
