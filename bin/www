@@ -14,7 +14,7 @@ var _ = require("underscore");
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '3000');
+var port = normalizePort(process.env.HTTP_PORT || '3000');
 app.set('port', port);
 
 models.sequelize.sync({ force : true }).then(function () {
@@ -72,17 +72,21 @@ models.sequelize.sync({ force : true }).then(function () {
           }
           models.Player.create( { gameId: game.id, playerName : 'noname-' + game.numOfPlayers } ).complete(function( err, player ){
             game.getPlayers().then( function( players ){
-              createGameSchedule( players );
+              createGameSchedule( game, players );
             });
           });
         });
 
-        models.Game.create( { gameName : 'Nio League', gameType : 'full-league', numOfPlayers: 12 } ).complete( function( err, game ){
+        models.Game.create( { gameName : 'Nio League', gameType : 'full-league', numOfPlayers: 8 } ).complete( function( err, game ){
           season.setGames( [ game ] );
-          for( var loop = 1 ; loop <= game.numOfPlayers ; loop++ ){
+          for( var loop = 1 ; loop < game.numOfPlayers ; loop++ ){
             models.Player.create( { gameId: game.id, playerName : 'noname-' + loop  } );
           }
-        });
+          models.Player.create( { gameId: game.id, playerName : 'noname-' + game.numOfPlayers } ).complete(function( err, player ){
+            game.getPlayers().then( function( players ){
+              createGameSchedule( game, players );
+            });
+          });        });
     });
   }
 
@@ -93,7 +97,10 @@ models.sequelize.sync({ force : true }).then(function () {
     2. match pair 는 각 pair 의 distance 가 같지 않도록 구성한다. 위 레퍼런스 참고
     2. match pair 는 고정된 값이며 schedule circle ( circuler queue 처럼 동작 ) 를 다이얼 돌리듯이 한칸씩 돌린(round) 후 match pair 로 match 추출
 */
-  function createGameSchedule( players ){
+  function createGameSchedule( game, players ){
+    var group = 'A';
+    var matches = [];     // models.Match.create( matches[?] )
+
     var numOfPlayers = players.length;
     var firstHalfMatchPair = [];
     var secondHalfMatchPair = [];
@@ -114,7 +121,7 @@ models.sequelize.sync({ force : true }).then(function () {
 
     var scheduleCircle = _.map( players, function( player ){
       // TODO 적용할때는 player.id 로 변경한다
-      return player.playerName
+      return player.id;
     });
     var scheduleCenter = scheduleCircle[numOfPlayers-1];
     scheduleCircle = _.initial( scheduleCircle );
@@ -131,19 +138,22 @@ models.sequelize.sync({ force : true }).then(function () {
     var firstHalfRound1 = _.map( firstHalfMatchPair, function( pair ){
       var homePlayer = scheduleCircle[pair[0]];
       var awayPlayer = pair[1] < 0 ? scheduleCenter : scheduleCircle[pair[1]];
-      return [round, homePlayer, awayPlayer ];
+      return { round: round, homePlayerId : homePlayer, awayPlayerId : awayPlayer };
     })
-    matches.push( firstHalfRound1 );
+    _.each( firstHalfRound1, function( match ){
+      matches.push( match );
+    });
 
     var secondHalfRound1 = _.map( secondHalfMatchPair, function( pair ){
       var homePlayer = pair[0] < 0 ? scheduleCenter : scheduleCircle[pair[0]];
       var awayPlayer = scheduleCircle[pair[1]];
-      return [round+turn, homePlayer, awayPlayer ];
+      return { round: round+turn, homePlayerId: homePlayer, awayPlayerId: awayPlayer };
     })
-    matches.push( secondHalfRound1 );
+    _.each( secondHalfRound1, function( match ){
+      matches.push( match );
+    });
 
     var last = numOfPlayers-2; // last index of circle
-
 
     round++;
     for( ; round <= turn ; round++ ){
@@ -158,10 +168,11 @@ models.sequelize.sync({ force : true }).then(function () {
       var first = _.map( firstHalfMatchPair, function( pair ){
         var homePlayer = scheduleCircle[pair[0]];
         var awayPlayer = pair[1] < 0 ? scheduleCenter : scheduleCircle[pair[1]];
-        return [ round, homePlayer, awayPlayer ];
+        return { round: round, homePlayerId : homePlayer, awayPlayerId : awayPlayer };
       })
-
-      matches.push( first );
+      _.each( first, function( match ){
+        matches.push( match );
+      });
 
       //console.log( scheduleCircle );
       //console.log( scheduleCircle[last] );
@@ -170,16 +181,29 @@ models.sequelize.sync({ force : true }).then(function () {
       var second = _.map( secondHalfMatchPair, function( pair ){
         var homePlayer = pair[0] < 0 ? scheduleCenter : scheduleCircle[pair[0]];
         var awayPlayer = scheduleCircle[pair[1]];
-        return [ round+turn, homePlayer, awayPlayer ];
+        return { round: round+turn, homePlayerId: homePlayer, awayPlayerId: awayPlayer };
       })
-      matches.push( second );
+      _.each( second, function( match ){
+        matches.push( match );
+      });
       //console.log( second );
-
     }
 
-    console.log( matches );
+    var count = 3;
+    _.each( matches, function( values ){
+      models.Match.create( values ).complete( function( err, match ){
+       game.addMatch( match );
+       if( count === 3 )
+          match.update( { homeScore: 1, awayScore : 2, status: 'close' } );
 
+       if( count === 2 )
+          match.update( { homeScore: 1, awayScore : 1, status: 'close' } );
 
+       if( count === 1 )
+          match.update( { homeScore: 2, awayScore : 1, status: 'close' } );
+        count--;
+      });
+    })
 
   }
 });
