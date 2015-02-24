@@ -10,6 +10,7 @@ module.exports = function (sequelize, DataTypes) {
     classMethods: {
       associate: function (models) {
         Game.hasMany(models.Player, { foreignKey : 'gameId' });
+        Game.hasMany(models.Match, { foreignKey : 'gameId' });
       }
     }
   });

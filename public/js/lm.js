@@ -47,6 +47,9 @@
   LM.api.games = {
     getStandings : function ( seasonId, gameId, success) {
       return LM.service.callGET('/seasons/' + seasonId + '/games/' + gameId + '/standings', {}, success );
+    },
+    getMatchesAndSchedule : function( seasonId, gameId, success ){
+      return LM.service.callGET('/seasons/' + seasonId + '/games/' + gameId + '/matches_and_schedule', {}, success );
     }
   };
 

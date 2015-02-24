@@ -17,16 +17,16 @@
   <tbody>
   <% _.each( standings, function( s ){ %>
   <tr>
-    <td><%= s.ranking %></td>
-    <td class="right"><a href="/teams/1"><%= s.teamName %></a></td>
-    <td class="right"><%= s.play %></td>
+    <td>1</td>
+    <td class="right"><a href="/teams/1"><%= s.playerName %></a></td>
+    <td class="right"><%= s.played %></td>
     <td class="right"><%= s.win %></td>
     <td class="right"><%= s.draw %></td>
     <td class="right"><%= s.lost %></td>
-    <td class="right">100</td>
-    <td class="right">00</td>
-    <td class="right">100</td>
-    <td class="right">114</td>
+    <td class="right"><%= s.for %></td>
+    <td class="right"><%= s.against %></td>
+    <td class="right">?</td>
+    <td class="right"><%= s.points %></td>
   </tr>
   <% }); %>
   </tbody>

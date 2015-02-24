@@ -1,0 +1,46 @@
+<!--<script id="game_matches_and_schedule_tpl" type="text/template">-->
+  <!--<table class="table table-hover">-->
+    <!--<thead>-->
+    <!--<tr>-->
+      <!--<th class="text-left"># Round</th>-->
+      <!--<th class="text-left">Home</th>-->
+      <!--<th class="text-left">Away</th>-->
+      <!--<th class="text-left">Status</th>-->
+    <!--</tr>-->
+    <!--</thead>-->
+    <!--<tbody>-->
+    <!--<% _.each( matches, function( m ){ %>-->
+    <!--<tr>-->
+      <!--<td><%= m.round %></td>-->
+      <!--<td class="right"><a href="/teams/<%= m.homePlayerId"><%= m.homePlayerId %></a></td>-->
+      <!--<td class="right"><a href="/teams/<%= m.awayPlayerId"><%= m.awayPlayerId %></a></td>-->
+      <!--<td class="right"><%= m.status %></td>-->
+    <!--</tr>-->
+    <!--<% }); %>-->
+    <!--</tbody>-->
+    <!--<tfoot></tfoot>-->
+  <!--</table>-->
+<!--</script>-->
+<script id="game_matches_and_schedule_tpl" type="text/template">
+  <table class="table table-hover">
+    <thead>
+    <tr>
+      <th class="text-left col-sm-1 col-md-1"># Round</th>
+      <th class="text-center col-sm-2">Home</th>
+      <th class="text-center col-sm-2">Away</th>
+      <th class="text-left">Status</th>
+    </tr>
+    </thead>
+    <tbody>
+    <% _.each( matches, function( match ){ %>
+    <tr>
+      <td><%= match.round %></td>
+      <td class="text-center"><%= match.homePlayer.playerName %></td>
+      <td class="text-center"><%= match.awayPlayer.playerName %></td>
+      <td class="right"><%= match.status %></td>
+    </tr>
+    <% }); %>
+    </tbody>
+    <tfoot></tfoot>
+  </table>
+</script>
