@@ -3,7 +3,7 @@
   <thead>
   <tr>
     <th class="text-left">#</th>
-    <th class="text-left">Team</th>
+    <th class="text-left col-sm-2 col-md-2">Team</th>
     <th class="text-left">P</th>
     <th class="text-left">W</th>
     <th class="text-left">D</th>
@@ -25,7 +25,7 @@
   <% _.each( standings, function( s, idx, list ){ %>
   <tr class="<%= rangking_tr_class[idx+1] %>">
     <td><%= idx+1 %></td>
-    <td class="right"><a href="/teams/1"><%= s.playerName %></a></td>
+    <td class="right"><img width="16" src="<%= s.teamEmblem %>"> <a href="/teams/<%= s.teamId %>"><%= s.teamName %> ( <%= s.playerName %> )</a></td>
     <td class="right"><%= s.played %></td>
     <td class="right"><%= s.win %></td>
     <td class="right"><%= s.draw %></td>
