@@ -52,5 +52,10 @@
       return LM.service.callGET('/seasons/' + seasonId + '/games/' + gameId + '/matches_and_schedule', {}, success );
     }
   };
+  LM.api.players = {
+    setTeam : function( playerId, teamId, success ){
+      return LM.service.callPOST('/players/' + playerId , { teamId : teamId }, success );
+    }
+  }
 
 })();

@@ -3,7 +3,7 @@
 {% block content %}
 <div class="container-fluid">
 
-  <h3 class="thin">{{game.gameName}}</h3>
+  <h3 class="thin">{{game.gameName}} <small><a href="/seasons/{{season.id}}/games/{{game.id}}/settings/players">settings</a></small></h3>
   <hr class="thin"/>
   <ul class="nav nav-pills" id="game-menu">
     <li role="presentation"><a href="#standings">Standings</a></li>

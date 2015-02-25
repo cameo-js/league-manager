@@ -1,6 +1,7 @@
 var models = require('../models');
 var express = require('express');
 var router = express.Router();
+
 var _ = require("underscore");
 var format = require('string-format')
 
@@ -161,6 +162,23 @@ router.get('/:id/games/:gameId', function (req, res, next) {
       models.Game.findOne({where: {seasonId: req.params.id, id: req.params.gameId}}).then(function (game) {
         context.game = game;
         res.render('game', context);
+      });
+    });
+  });
+});
+
+router.get('/:id/games/:gameId/settings/players', function (req, res, next) {
+  models.Season.findOne({where: {id: req.params.id}}).then(function (season) {
+    season.getGames().then(function (games) {
+      season.games = games;
+      var context = {season: season};
+
+      models.Game.findOne({where: {seasonId: req.params.id, id: req.params.gameId}}).then(function (game) {
+        context.game = game;
+        game.getPlayers({ include : [ {all:true} ] }).then( function ( players ){
+          context.players = players;
+          res.render('game_settings_players', context );
+        })
       });
 
     });
