@@ -35,8 +35,14 @@
     <% _.each( matches, function( match ){ %>
     <tr>
       <td><%= match.round %></td>
-      <td class="text-center"><%= match.homePlayer.playerName %></td>
-      <td class="text-center"><%= match.awayPlayer.playerName %></td>
+      <td class="text-center"><% if ( match.homePlayer.team ){ %><img width="16" src="<%= match.homePlayer.team.teamEmblem %>"> <a
+          href="/teams/<%= match.homePlayer.team.id %>"><%=
+        match.homePlayer.playerName %><% } else { %><%=
+        match.homePlayer.playerName %><% } %></td>
+      <td class="text-center"><% if ( match.awayPlayer.team ){ %><img width="16" src="<%= match.awayPlayer.team.teamEmblem %>"> <a
+          href="/teams/<%= match.awayPlayer.team.id %>"><%=
+        match.awayPlayer.playerName %><% } else { %><%=
+        match.awayPlayer.playerName %><% } %></td>
       <td class="right"><%= match.status %></td>
     </tr>
     <% }); %>

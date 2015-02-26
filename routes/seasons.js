@@ -11,7 +11,7 @@ router.get('/:id', function (req, res, next) {
       var context = {season: season};
       season.games = games;
       res.render('season', context);
-     });
+    });
   });
 });
 
@@ -59,26 +59,26 @@ router.post('/:id/games/new', function (req, res, next) {
         var secondHalfMatchPair = [];
 
         // match pair 생성
-        for( var i = 0 ; i < numOfPlayers/2 ; i++ ){
-          if( i === 0 ){
-            firstHalfMatchPair.push( [ i, -1 ] );
-            secondHalfMatchPair.push( [ -1, i ]);
+        for (var i = 0; i < numOfPlayers / 2; i++) {
+          if (i === 0) {
+            firstHalfMatchPair.push([i, -1]);
+            secondHalfMatchPair.push([-1, i]);
           } else {
-            firstHalfMatchPair.push( [ i, numOfPlayers-(i+1) ] );
-            secondHalfMatchPair.push( [ numOfPlayers-(i+1), i ]);
+            firstHalfMatchPair.push([i, numOfPlayers - (i + 1)]);
+            secondHalfMatchPair.push([numOfPlayers - (i + 1), i]);
           }
         }
 
         // console.log( firstHalfMatchPair );
         // console.log( secondHalfMatchPair );
 
-        var scheduleCircle = _.map( players, function( player ){
+        var scheduleCircle = _.map(players, function (player) {
           return player.id
         });
-        var scheduleCenter = scheduleCircle[numOfPlayers-1];
-        scheduleCircle = _.initial( scheduleCircle );
+        var scheduleCenter = scheduleCircle[numOfPlayers - 1];
+        scheduleCircle = _.initial(scheduleCircle);
 
-        console.log( scheduleCircle ) ;
+        console.log(scheduleCircle);
 
         var schedules = [];
         var totalRounds = numOfPlayers * 2 - 2;
@@ -87,62 +87,62 @@ router.post('/:id/games/new', function (req, res, next) {
         var matches = [];
         var round = 1;
 
-        var firstHalfRound1 = _.map( firstHalfMatchPair, function( pair ){
+        var firstHalfRound1 = _.map(firstHalfMatchPair, function (pair) {
           var homePlayer = scheduleCircle[pair[0]];
           var awayPlayer = pair[1] < 0 ? scheduleCenter : scheduleCircle[pair[1]];
-          return { round: round, homePlayerId : homePlayer, awayPlayerId : awayPlayer };
+          return {round: round, homePlayerId: homePlayer, awayPlayerId: awayPlayer};
         })
-        _.each( firstHalfRound1, function( match ){
-          matches.push( match );
+        _.each(firstHalfRound1, function (match) {
+          matches.push(match);
         });
 
-        var secondHalfRound1 = _.map( secondHalfMatchPair, function( pair ){
+        var secondHalfRound1 = _.map(secondHalfMatchPair, function (pair) {
           var homePlayer = pair[0] < 0 ? scheduleCenter : scheduleCircle[pair[0]];
           var awayPlayer = scheduleCircle[pair[1]];
-          return { round: round+turn, homePlayerId: homePlayer, awayPlayerId: awayPlayer };
+          return {round: round + turn, homePlayerId: homePlayer, awayPlayerId: awayPlayer};
         })
-        _.each( secondHalfRound1, function( match ){
-          matches.push( match );
+        _.each(secondHalfRound1, function (match) {
+          matches.push(match);
         });
 
-        var last = numOfPlayers-2; // last index of circle
+        var last = numOfPlayers - 2; // last index of circle
 
         round++;
-        for( ; round <= turn ; round++ ){
+        for (; round <= turn; round++) {
           //console.log( scheduleCircle );
           //console.log( scheduleCircle[last] );
 
           // right shift and last item insert to 0 index
           // circle 을 시계방향으로 한번 돌린다.
           scheduleCircle.splice(0, 0, scheduleCircle[last]);
-          scheduleCircle = _.initial( scheduleCircle );
+          scheduleCircle = _.initial(scheduleCircle);
 
-          var firstHalfRounds = _.map( firstHalfMatchPair, function( pair ){
+          var firstHalfRounds = _.map(firstHalfMatchPair, function (pair) {
             var homePlayer = scheduleCircle[pair[0]];
             var awayPlayer = pair[1] < 0 ? scheduleCenter : scheduleCircle[pair[1]];
-            return { round: round, homePlayerId : homePlayer, awayPlayerId : awayPlayer };
+            return {round: round, homePlayerId: homePlayer, awayPlayerId: awayPlayer};
           })
-          _.each( firstHalfRounds, function( match ){
-            matches.push( match );
+          _.each(firstHalfRounds, function (match) {
+            matches.push(match);
           });
 
           //console.log( scheduleCircle );
           //console.log( scheduleCircle[last] );
           //console.log( first );
 
-          var secondHalfRounds = _.map( secondHalfMatchPair, function( pair ){
+          var secondHalfRounds = _.map(secondHalfMatchPair, function (pair) {
             var homePlayer = pair[0] < 0 ? scheduleCenter : scheduleCircle[pair[0]];
             var awayPlayer = scheduleCircle[pair[1]];
-            return { round: round+turn, homePlayerId: homePlayer, awayPlayerId: awayPlayer };
+            return {round: round + turn, homePlayerId: homePlayer, awayPlayerId: awayPlayer};
           })
-          _.each( secondHalfRounds, function( match ){
-            matches.push( match );
+          _.each(secondHalfRounds, function (match) {
+            matches.push(match);
           });
         }
 
-        _.each( matches, function( values ){
-          models.Match.create( values ).complete( function( err, match ){
-            game.addMatch( match );
+        _.each(matches, function (values) {
+          models.Match.create(values).complete(function (err, match) {
+            game.addMatch(match);
           });
         })
 
@@ -175,9 +175,9 @@ router.get('/:id/games/:gameId/settings/players', function (req, res, next) {
 
       models.Game.findOne({where: {seasonId: req.params.id, id: req.params.gameId}}).then(function (game) {
         context.game = game;
-        game.getPlayers({ include : [ {all:true} ] }).then( function ( players ){
+        game.getPlayers({include: [{all: true}]}).then(function (players) {
           context.players = players;
-          res.render('game_settings_players', context );
+          res.render('game_settings_players', context);
         })
       });
 
@@ -186,19 +186,19 @@ router.get('/:id/games/:gameId/settings/players', function (req, res, next) {
 });
 
 router.get('/:id/games/:gameId/matches_and_schedule', function (req, res, next) {
-  models.Game.findOne( { where : { id : req.params.gameId }}).complete( function( err, game ){
-    game.getMatches({ include: [{ all: true }], order : 'round' }).then( function( matches ){
-      res.json( { matches : matches } );
+  models.Game.findOne({where: {id: req.params.gameId}}).complete(function (err, game) {
+    game.getMatches({include: [{all: true, include: [{all: true}]}], order: 'round'}).then(function (matches) {
+      res.json({matches: matches});
     })
   });
 });
 
 router.get('/:id/games/:gameId/standings', function (req, res, next) {
 
-  models.sequelize.query(format(standingsQuery,{ gameId : req.params.gameId })).complete( function( err, rows ){
+  models.sequelize.query(format(standingsQuery, {gameId: req.params.gameId})).complete(function (err, rows) {
     //if( err ) console.log( err );
-    console.log( rows[0] );
-    res.json( { standings : rows[0] } )
+    console.log(rows[0]);
+    res.json({standings: rows[0]})
   });
 });
 

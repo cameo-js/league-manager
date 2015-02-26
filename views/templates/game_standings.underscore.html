@@ -1,9 +1,10 @@
 <script id="game_standings_tpl" type="text/template">
-<table class="table table-hover">
+<div class="table-responsive tab-pane-component">
+  <table class="table table-hover">
   <thead>
   <tr>
-    <th class="text-left">#</th>
-    <th class="text-left col-sm-2 col-md-2">Team</th>
+    <th class="text-left" width="10">#</th>
+    <th class="text-left col-sm-3 col-md-3">Team</th>
     <th class="text-left">P</th>
     <th class="text-left">W</th>
     <th class="text-left">D</th>
@@ -25,7 +26,8 @@
   <% _.each( standings, function( s, idx, list ){ %>
   <tr class="<%= rangking_tr_class[idx+1] %>">
     <td><%= idx+1 %></td>
-    <td class="right"><img width="16" src="<%= s.teamEmblem %>"> <a href="/teams/<%= s.teamId %>"><%= s.teamName %> ( <%= s.playerName %> )</a></td>
+    <td class="right team-name"><img width="16" src="<%= s.teamEmblem %>"
+        > <a href="/teams/<%= s.teamId %>"><%= s.teamName %> ( <%= s.playerName %> )</a></td>
     <td class="right"><%= s.played %></td>
     <td class="right"><%= s.win %></td>
     <td class="right"><%= s.draw %></td>
@@ -39,4 +41,5 @@
   </tbody>
   <tfoot></tfoot>
 </table>
+</div>
 </script>
