@@ -53,9 +53,31 @@
   function render_matches_and_schedule( seasonId, gameId ){
     var template = _.template( $("#game_matches_and_schedule_tpl").html() );
     LM.api.games.getMatchesAndSchedule( seasonId, gameId, function( data ){
-      console.log( data );
       $('#matches_and_schedule').html( template(data) );
       $('#game-menu a[href="#matches_and_schedule"]').tab('show')
+      _.each( data.matches, function( match ){
+        $('td > a#score-' + match.id ).editable({
+          value: {
+            homeScore: match.homeScore,
+            awayScore: match.awayScore,
+            status : match.status
+          },
+          validate: function(value) {
+          },
+          display: function(value) {
+            if(!value) {
+              $(this).empty();
+              return;
+            }
+            var html;
+            if( value.status === 'open' )
+              html = '결과입력';
+            else
+              html = '<b>' + $('<span>').text(value.homeScore).html() + '</b> vs <b>'+ $('<span>').text(value.awayScore).html() + '</b>';
+            $(this).html(html);
+          }
+        });
+      })
     });
   }
 </script>

@@ -27,6 +27,7 @@
     <tr>
       <th class="text-left col-sm-1 col-md-1"># Round</th>
       <th class="text-center col-sm-2">Home</th>
+      <th class="text-center col-sm-1 col-md-1"></th>
       <th class="text-center col-sm-2">Away</th>
       <th class="text-left">Status</th>
     </tr>
@@ -39,11 +40,14 @@
           href="/teams/<%= match.homePlayer.team.id %>"><%=
         match.homePlayer.playerName %><% } else { %><%=
         match.homePlayer.playerName %><% } %></td>
+      <td
+          class="text-center"><a href="#" id="score-<%= match.id %>" data-type="address" data-pk="<%= match.id %>" data-title="경기결과입력"
+                                 data-url="/games/<%= match.gameId %>/matches/<%= match.id %>"></a></td>
       <td class="text-center"><% if ( match.awayPlayer.team ){ %><img width="16" src="<%= match.awayPlayer.team.teamEmblem %>"> <a
           href="/teams/<%= match.awayPlayer.team.id %>"><%=
         match.awayPlayer.playerName %><% } else { %><%=
         match.awayPlayer.playerName %><% } %></td>
-      <td class="right"><%= match.status %></td>
+      <td class="right"></td>
     </tr>
     <% }); %>
     </tbody>
