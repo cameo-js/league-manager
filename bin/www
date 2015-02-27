@@ -213,7 +213,7 @@ models.sequelize.sync({ force : true }).then(function () {
     models.Team.create( { teamName: 'AC밀란', teamEmblem: '/images/emblem/acm.png' });
     models.Team.create( { teamName: '바르샤', teamEmblem: '/images/emblem/barcelona.png' });
     models.Team.create( { teamName: '뮌헨', teamEmblem: '/images/emblem/bm.png' });
-    models.Team.create( { teamName: '첼시', teamEmblem: '/images/emblem/chelsae.png' });
+    models.Team.create( { teamName: '첼시', teamEmblem: '/images/emblem/chelsea.png' });
     models.Team.create( { teamName: '맨시티', teamEmblem: '/images/emblem/mc.png' });
     models.Team.create( { teamName: '맨유', teamEmblem: '/images/emblem/mu.png' });
     models.Team.create( { teamName: 'PSG', teamEmblem: '/images/emblem/psg.png' });

@@ -2,7 +2,6 @@ var models = require('../models');
 var express = require('express');
 var router = express.Router();
 
-
 router.put('/:gameId/players/:playerId', function(req, res, next) {
   models.Player.findOne( { where: {id: req.body.pk }}).complete( function( err, player ){
 

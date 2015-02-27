@@ -202,6 +202,26 @@ router.get('/:id/games/:gameId/standings', function (req, res, next) {
   });
 });
 
+router.get('/:id/games/:gameId/players/:playerId', function(req, res, next){
+  models.Season.findOne({where: {id: req.params.id}}).then(function (season) {
+    season.getGames().then(function (games) {
+      season.games = games;
+      var context = {season: season};
+
+      models.Game.findOne({where: {seasonId: req.params.id, id: req.params.gameId}}).then(function (game) {
+        context.game = game;
+        game.getPlayers( {where: {id: req.params.playerId}, include: [{all: true}]}).then( function( players ){
+          
+          context.player = players[0];
+          console.log( context );
+          res.render('player', context);
+        });
+      });
+
+    });
+  });
+});
+
 /* query */
 
 /* standings query
