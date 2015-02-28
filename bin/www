@@ -17,11 +17,13 @@ var _ = require("underscore");
 var port = normalizePort(process.env.HTTP_PORT || '3000');
 app.set('port', port);
 
-models.sequelize.sync({ force : true }).then(function () {
+models.sequelize.sync().then(function () {
   /* 테스트용 데이터 */
-  createSeasonAndGame();
+  // createSeasonAndGame();
+  /* 테스트용 데이터 */
+  
+  createSeason();
   createTeams();
-  /* 테스트용 데이터 */
 
   var server = http.createServer(app);
   server.listen(port);
@@ -206,6 +208,10 @@ models.sequelize.sync({ force : true }).then(function () {
       });
     })
 
+  }
+  
+  function createSeason(){
+    models.Season.create( { seasonName : '15-16 Season' } );
   }
 
   function createTeams(){
