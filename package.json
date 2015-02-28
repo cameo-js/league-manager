@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "DEBUG=league-manager:* NODE_ENV=development ./bin/www"
+    "start": "DEBUG=league-manager:* NODE_ENV=production ./bin/www"
   },
   "dependencies": {
     "body-parser": "~1.10.2",
