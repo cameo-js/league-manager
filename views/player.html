@@ -1,0 +1,14 @@
+{% extends 'default_layout.html' %}
+
+{% block content %}
+<div class="container-fluid">
+  {% include 'includes/game_title.html' %}
+  <h2 class="thin">{% if player.team %}<img height=150 src="{{player.team.teamEmblem}}"> {{player.team.teamName}}{% endif
+    %} <small>({{player.playerName}}) </small></h2>
+  <div>리그 승무패 , match and schedule</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+
+{% endblock %}

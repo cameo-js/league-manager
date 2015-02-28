@@ -1,0 +1,38 @@
+<script id="game_standings_mini_tpl" type="text/template">
+<table class="table table-hover table-bordered">
+  <thead>
+  <tr>
+    <th class="text-left">#</th>
+    <th class="text-left">Team</th>
+    <th class="text-left">P</th>
+    <th class="text-left">W</th>
+    <th class="text-left">D</th>
+    <th class="text-left">L</th>
+    <th class="text-left">Pts</th>
+  </tr>
+  </thead>
+  <tbody>
+  <%
+    var rangking_tr_class = {
+      1: 'info',
+      2: 'warning',
+      3: 'success'
+    };
+  %>
+  <% _.each( standings, function( s, idx, list ){ %>
+  <tr class="<%= rangking_tr_class[idx+1] %>">
+    <td><%= idx+1 %></td>
+    <td class="right team-name"><img class="team-emblem" width="16" src="<%= s.teamEmblem %>"
+        > <a href="/seasons/<%= seasonId %>/games/<%= gameId %>/players/<%= s.playerId %>"><%= s.teamName %> ( <%= s.playerName %> )</a></td>
+    <td class="right"><%= s.played %></td>
+    <td class="right"><%= s.win %></td>
+    <td class="right"><%= s.draw %></td>
+    <td class="right"><%= s.lost %></td>
+    <td class="right"><%= s.points %></td>
+  </tr>
+  <% }); %>
+
+  </tbody>
+  <tfoot></tfoot>
+</table>
+</script>

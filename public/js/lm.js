@@ -45,10 +45,22 @@
 
   LM.api = {};
   LM.api.games = {
-    url: "/games",
-    getStandings : function ( gameId, success) {
-      return LM.service.callGET(LM.api.games.url + '/' + gameId + '/standings', {}, success );
+    getStandings : function ( seasonId, gameId, success) {
+      return LM.service.callGET('/seasons/' + seasonId + '/games/' + gameId + '/standings', {}, success );
+    },
+    getMatchesAndSchedule : function( seasonId, gameId, success ){
+      return LM.service.callGET('/seasons/' + seasonId + '/games/' + gameId + '/matches_and_schedule', {}, success );
     }
   };
+  LM.api.players = {
+    setTeam : function( playerId, teamId, success ){
+      return LM.service.callPOST('/players/' + playerId , { teamId : teamId }, success );
+    }
+  };
+  LM.api.matches = {
+    reset : function( gameId, matchId, success ){
+      return LM.service.callPOST('/games/' + gameId + '/matches/' + matchId + '/reset' , {}, success );
+    }
+  }
 
 })();

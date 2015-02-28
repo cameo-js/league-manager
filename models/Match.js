@@ -12,7 +12,6 @@ module.exports = function (sequelize, DataTypes) {
   }, {
     classMethods: {
       associate: function (models) {
-        Match.belongsTo(models.Game, {as: 'game'});
         Match.belongsTo(models.Player, {as: 'homePlayer'});
         Match.belongsTo(models.Player, {as: 'awayPlayer'});
       }

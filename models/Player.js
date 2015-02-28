@@ -6,8 +6,7 @@ module.exports = function(sequelize, DataTypes) {
   }, {
     classMethods: {
       associate: function(models) {
-        Player.belongsTo(models.Game);
-        Player.belongsTo(models.Team);
+        Player.belongsTo(models.Team, { as : 'team' });
       }
     }
   });

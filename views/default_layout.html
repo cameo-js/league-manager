@@ -12,6 +12,9 @@
   <!-- Optional theme -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
 
+  <link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
+
+  <link rel="stylesheet" href="/css/x-editable/address.css">
   <link rel="stylesheet" href="/css/style.css">
   <style>
     body {
@@ -42,19 +45,20 @@
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Games <span class="caret"></span></a>
           <ul class="dropdown-menu" role="menu">
             <!-- 현재 시즌에 등록된 게임들을 보여준다. -->
-            {% for game in games %}
-            <li><a href="/games/{{game.id}}">{{game.gameName}}</a></li>
+            {% for game in season.games %}
+            <li><a href="/seasons/{{season.id}}/games/{{game.id}}">{{game.gameName}}</a></li>
             {% endfor %}
             <li class="divider"></li>
-            <li><a href="/games/new">Create Game.</a></li>
+            <li><a href="/seasons/{{season.id}}/games/new">Create Game.</a></li>
           </ul>
         </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">seihwan Choi <span class="caret"></span></a>
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Settings
+            <span class="caret"></span></a>
           <ul class="dropdown-menu" role="menu">
-            <li><a href="#">로그아웃</a></li>
+            <li><a href="#">Ooops! Not implimented</a></li>
           </ul>
         </li>
       </ul>
@@ -64,12 +68,22 @@
 </nav>
 
 {% block content %}{% endblock %}
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+</script>
+<!--<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>-->
+<script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
 <!-- Latest compiled and minified JavaScript -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore-min.js"></script>
+<script src="/js/noty/jquery.noty.packaged.min.js"></script>
+<script src="/js/x-editable/address.js"></script>
 <script src="/js/lm.js"></script>
+<script>
+  $.noty.defaults.layout = 'topCenter';
+  $.noty.defaults.timeout = 1000;
+
+  $.fn.editable.defaults.mode = 'inline';
+</script>
 {% block scripts %}{% endblock %}
 
 </body>

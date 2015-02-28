@@ -2,8 +2,7 @@
 
 {% block content %}
 <div class="container-fluid">
-
-  <h3 class="thin">Daumkakao league : {{gameId}}</h3>
+  {% include 'includes/game_title.html' %}
   <hr class="thin"/>
   <ul class="nav nav-pills" id="game-menu">
     <li role="presentation"><a href="#standings">Standings</a></li>
@@ -19,7 +18,6 @@
       {% include 'templates/game_recently_result.html' %}
     </div>
     <div role="tabpanel" class="tab-pane" id="matches_and_schedule">
-      {% include 'templates/game_matches_and_schedule.html' %}
     </div>
   </div>
 </div>
@@ -27,27 +25,104 @@
 {% block scripts %}
 <script>
   $(function () {
+    $.fn.editable.defaults.mode = 'popup';
+    
     // game page variables
-    var gameId = {{gameId}};
+    var seasonId = {{season.id}};
+    var gameId = {{game.id}};
     // game page variables
 
-    render_standings( gameId );
+  
+    render_standings( seasonId, gameId );
 
     $('#game-menu a').click(function (e) {
       e.preventDefault();
-      $(this).tab('show');
+      if( $(this).attr("href") === "#standings" )
+        render_standings( seasonId, gameId );
+      if( $(this).attr("href") === "#matches_and_schedule" )
+        render_matches_and_schedule( seasonId, gameId );
     });
+  
   });
 
-  function render_standings( gameId ){
+  function render_standings( seasonId, gameId ){
     var template = _.template( $("#game_standings_tpl").html() );
-    LM.api.games.getStandings( gameId, function( data ){
+    LM.api.games.getStandings( seasonId, gameId, function( data ){
+      data.seasonId = seasonId;
+      data.gameId = gameId;
       $('#standings').html( template(data) );
       $('#game-menu a[href="#standings"]').tab('show')
     });
   }
+
+  function render_matches_and_schedule( seasonId, gameId ){
+    var template = _.template( $("#game_matches_and_schedule_tpl").html() );
+    LM.api.games.getMatchesAndSchedule( seasonId, gameId, function( data ){
+      data.seasonId = seasonId;
+      data.gameId = gameId;
+      
+      $('#matches_and_schedule').html( template(data) );
+      
+      $('#game-menu a[href="#matches_and_schedule"]').tab('show')
+      $('[data-toggle="tooltip"]').tooltip()
+      
+      $('td > span.glyphicon-remove').on('click', function(e){
+        console.log( $(this).attr('data-match-id') );
+        var matchId = $(this).attr('data-match-id');
+        LM.api.matches.reset( gameId, matchId, function( res ){
+          if( res.success ){
+            $("#match-fn-delete-" + matchId).addClass('hide');
+            $("#match-score-" + matchId).html('결과입력');
+            $("#match-" + matchId).removeClass('success');
+
+            noty({
+              text: '경기결과를 초기화 했습니다.',
+              type: 'success',
+              timeout: 1000
+            });
+          }
+        });
+      });
+      
+      _.each( data.matches, function( match ){
+        $('td > a#match-score-' + match.id ).editable({
+          value: {
+            homeScore: match.homeScore,
+            awayScore: match.awayScore,
+            status : match.status
+          },
+          validate: function(value) {
+          },
+          display: function(value) {
+            if(!value) {
+              $(this).empty();
+              return;
+            }
+            var html;
+            if( value.status === 'open' )
+              html = '결과입력';
+            else
+              html = '<b>' + $('<span>').text(value.homeScore).html() + '</b> vs <b>'+ $('<span>').text(value.awayScore).html() + '</b>';
+            $(this).html(html);
+          }
+        });
+        $('td > a#match-score-' + match.id).on('save', function(e, params){
+          $("#match-" + match.id).addClass('success');
+          $("#match-fn-delete-" + match.id).removeClass('hide');
+          noty({
+            text: '경기결과가 저장되었습니다. 감사합니다. :)',
+            type: 'success',
+            timeout: 1000
+          });
+        });
+
+      });
+
+    });
+  }
 </script>
 {% include 'templates/game_standings.underscore.html' %}
+{% include 'templates/game_matches_and_schedule.underscore.html' %}
 
 {% endblock %}
 

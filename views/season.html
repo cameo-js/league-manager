@@ -4,33 +4,10 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-md-6 col-sm-6">
-      {% for game in games %}
-      <a href="/games/{{game.id}}"><h4>{{game.gameName}} <small>standings</small></h4></a>
-      <table class="table table-hover table-bordered">
-        <thead>
-        <tr>
-          <th class="text-left">#</th>
-          <th class="text-left">Team</th>
-          <th class="text-left">P</th>
-          <th class="text-left">W</th>
-          <th class="text-left">D</th>
-          <th class="text-left">L</th>
-          <th class="text-left">Pts</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-          <td>1</td>
-          <td class="right">arsenal</td>
-          <td class="right">38</td>
-          <td class="right">38</td>
-          <td class="right">0</td>
-          <td class="right">0</td>
-          <td class="right">114</td>
-        </tr>
-        </tbody>
-        <tfoot></tfoot>
-      </table>
+      {% for game in season.games %}
+      <a href="/seasons/{{season.id}}/games/{{game.id}}"><h4>{{game.gameName}} <small>standings</small></h4></a>
+      <div id="game-standings-{{game.id}}"></div>
+      <hr>
       {% endfor %}
     </div>
     <div class="col-md-6 col-sm-6">
@@ -40,3 +17,33 @@
 
 </div>
 {% endblock %}
+
+{% block scripts %}
+<script>
+  $(function () {
+
+    var seasonId = {{season.id}};
+    var gameIds =  [];
+    {% for game in season.games %} gameIds.push({{game.id}}); {% endfor %}
+
+    console.log( gameIds );
+
+    _.each( gameIds, function( gameId ){
+      render_standings( seasonId, gameId );
+    });
+  });
+
+  function render_standings( seasonId, gameId ){
+
+    var template = _.template( $("#game_standings_mini_tpl").html() );
+    LM.api.games.getStandings( seasonId, gameId, function( data ){
+      data.seasonId = seasonId;
+      data.gameId = gameId;
+      $('#game-standings-' + gameId).html( template(data) );
+    });
+  }
+</script>
+{% include 'templates/game_standings_mini.underscore.html' %}
+
+{% endblock %}
+

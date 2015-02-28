@@ -1,0 +1,76 @@
+{% extends 'default_layout.html' %}
+
+{% block content %}
+<div class="container-fluid">
+
+  <h3 class="thin">{{game.gameName}} Settings <small><a href="/seasons/{{season.id}}/games/{{game.id}}">move to standings</a></small></h3>
+  <hr class="thin"/>
+  <ul class="nav nav-pills" id="game-settings-menu">
+    <li role="presentation"><a href="#players">Players</a></li>
+  </ul>
+
+  <!-- Tab panes -->
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane" id="players">
+      <table class="table table-hover">
+        <thead>
+        <tr>
+          <th class="text-left">#</th>
+          <th class="text-left">PlayerName</th>
+          <th class="text-left">Team</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for player in players %}
+        <tr>
+          <td class="col-sm-1 col-md-1">{{player.id}}</td>
+          <td class="right col-sm-3 col-md-3"><a href="#" id="playerName" data-type="text" data-pk="{{player.id}}"
+                                                 data-url="/games/{{game.id}}/players/{{player.id}}"
+                                                 data-title="Enter PlayerName">{{player.playerName}}</a></td>
+          <td class="right"><a href="#" id="teamId" data-type="select" data-pk="{{player.id}}" data-value="{{player.team.id}}"
+                               data-source="/teams"
+                               data-url="/games/{{game.id}}/players/{{player.id}}"
+                               data-title="Select group">{{player.team.teamName}}</a></td>
+        </tr>
+        {% endfor %}
+        </tbody>
+        <tfoot></tfoot>
+      </table>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+  $(function () {
+    // game page variables
+    var seasonId = {{season.id}};
+    var gameId = {{game.id}};
+    // game page variables
+
+    $("td > a#playerName").editable();
+    $("td > a#teamId").editable({
+      showbuttons: false
+    })
+    $("td > a#playerName").on("save", function(e, params){
+      noty({
+        text: params.response.player.playerName + ' 로 Player 이름을 변경했습니다.',
+        type: 'success',
+        timeout: 1000
+      });
+    });
+    $("td > a#teamId").on("save", function(e, params){
+      noty({
+        text: 'Team 을 변경했습니다.',
+        type: 'success',
+        timeout: 1000
+      });
+    });
+
+  
+    $('#game-settings-menu a[href="#players"]').tab('show')
+  });
+</script>
+{% endblock %}
+

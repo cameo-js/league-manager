@@ -7,3 +7,15 @@ hr.thin {
     margin-top: 15px;
     margin-bottom: 15px;
 }
+
+.tab-pane-component{
+    margin-top : 10px;
+}
+
+/* standings */
+.team-name {
+    font-size:12px;
+}
+.team-emblem {
+    vertical-align: text-bottom;
+}
