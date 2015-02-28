@@ -37,6 +37,8 @@
 
     var template = _.template( $("#game_standings_mini_tpl").html() );
     LM.api.games.getStandings( seasonId, gameId, function( data ){
+      data.seasonId = seasonId;
+      data.gameId = gameId;
       $('#game-standings-' + gameId).html( template(data) );
     });
   }

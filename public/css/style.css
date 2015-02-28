@@ -16,3 +16,6 @@ hr.thin {
 .team-name {
     font-size:12px;
 }
+.team-emblem {
+    vertical-align: text-bottom;
+}

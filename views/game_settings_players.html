@@ -49,16 +49,26 @@
     var gameId = {{game.id}};
     // game page variables
 
-    $.fn.editable.defaults.mode = 'inline';
-    $.fn.editable.defaults.ajaxOptions = {type: "PUT"};
-
-    $("td > a").editable();
-    $("#team").on("save", function(e, params){
-//      console.log( e );
-//      console.log( params );
-//      LM.api.players.setTeam( $(this).attr("data-pk"), params.submitValue, function(){} );
+    $("td > a#playerName").editable();
+    $("td > a#teamId").editable({
+      showbuttons: false
     })
+    $("td > a#playerName").on("save", function(e, params){
+      noty({
+        text: params.response.player.playerName + ' 로 Player 이름을 변경했습니다.',
+        type: 'success',
+        timeout: 1000
+      });
+    });
+    $("td > a#teamId").on("save", function(e, params){
+      noty({
+        text: 'Team 을 변경했습니다.',
+        type: 'success',
+        timeout: 1000
+      });
+    });
 
+  
     $('#game-settings-menu a[href="#players"]').tab('show')
   });
 </script>

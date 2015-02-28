@@ -56,6 +56,11 @@
     setTeam : function( playerId, teamId, success ){
       return LM.service.callPOST('/players/' + playerId , { teamId : teamId }, success );
     }
+  };
+  LM.api.matches = {
+    reset : function( gameId, matchId, success ){
+      return LM.service.callPOST('/games/' + gameId + '/matches/' + matchId + '/reset' , {}, success );
+    }
   }
 
 })();

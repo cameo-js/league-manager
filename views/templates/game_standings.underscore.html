@@ -26,7 +26,8 @@
   <% _.each( standings, function( s, idx, list ){ %>
   <tr class="<%= rangking_tr_class[idx+1] %>">
     <td><%= idx+1 %></td>
-    <td class="right team-name"><img width="16" src="<%= s.teamEmblem %>"> <a href="/seasons/<%= seasonId %>/games/<%= gameId %>/players/<%= s.playerId %>"><%= s.teamName %> ( <%= s.playerName %> )</a></td>
+    <td class="right team-name"><img class="team-emblem" width="16" src="<%= s.teamEmblem %>"> <a
+        href="/seasons/<%= seasonId %>/games/<%= gameId %>/players/<%= s.playerId %>"><%= s.teamName %> ( <%= s.playerName %> )</a></td>
     <td class="right"><%= s.played %></td>
     <td class="right"><%= s.win %></td>
     <td class="right"><%= s.draw %></td>

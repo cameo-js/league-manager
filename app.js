@@ -12,6 +12,7 @@ var routes = require('./routes/index');
 var seasons = require('./routes/seasons');
 var games = require('./routes/games');
 var teams = require('./routes/teams');
+var matches = require('./routes/matches');
 
 var app = express();
 

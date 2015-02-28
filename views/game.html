@@ -25,11 +25,14 @@
 {% block scripts %}
 <script>
   $(function () {
+    $.fn.editable.defaults.mode = 'popup';
+    
     // game page variables
     var seasonId = {{season.id}};
     var gameId = {{game.id}};
     // game page variables
 
+  
     render_standings( seasonId, gameId );
 
     $('#game-menu a').click(function (e) {
@@ -39,6 +42,7 @@
       if( $(this).attr("href") === "#matches_and_schedule" )
         render_matches_and_schedule( seasonId, gameId );
     });
+  
   });
 
   function render_standings( seasonId, gameId ){
@@ -54,10 +58,34 @@
   function render_matches_and_schedule( seasonId, gameId ){
     var template = _.template( $("#game_matches_and_schedule_tpl").html() );
     LM.api.games.getMatchesAndSchedule( seasonId, gameId, function( data ){
+      data.seasonId = seasonId;
+      data.gameId = gameId;
+      
       $('#matches_and_schedule').html( template(data) );
+      
       $('#game-menu a[href="#matches_and_schedule"]').tab('show')
+      $('[data-toggle="tooltip"]').tooltip()
+      
+      $('td > span.glyphicon-remove').on('click', function(e){
+        console.log( $(this).attr('data-match-id') );
+        var matchId = $(this).attr('data-match-id');
+        LM.api.matches.reset( gameId, matchId, function( res ){
+          if( res.success ){
+            $("#match-fn-delete-" + matchId).addClass('hide');
+            $("#match-score-" + matchId).html('결과입력');
+            $("#match-" + matchId).removeClass('success');
+
+            noty({
+              text: '경기결과를 초기화 했습니다.',
+              type: 'success',
+              timeout: 1000
+            });
+          }
+        });
+      });
+      
       _.each( data.matches, function( match ){
-        $('td > a#score-' + match.id ).editable({
+        $('td > a#match-score-' + match.id ).editable({
           value: {
             homeScore: match.homeScore,
             awayScore: match.awayScore,
@@ -78,7 +106,18 @@
             $(this).html(html);
           }
         });
-      })
+        $('td > a#match-score-' + match.id).on('save', function(e, params){
+          $("#match-" + match.id).addClass('success');
+          $("#match-fn-delete-" + match.id).removeClass('hide');
+          noty({
+            text: '경기결과가 저장되었습니다. 감사합니다. :)',
+            type: 'success',
+            timeout: 1000
+          });
+        });
+
+      });
+
     });
   }
 </script>

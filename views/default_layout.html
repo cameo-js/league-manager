@@ -75,8 +75,15 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore-min.js"></script>
+<script src="/js/noty/jquery.noty.packaged.min.js"></script>
 <script src="/js/x-editable/address.js"></script>
 <script src="/js/lm.js"></script>
+<script>
+  $.noty.defaults.layout = 'topCenter';
+  $.noty.defaults.timeout = 1000;
+
+  $.fn.editable.defaults.mode = 'inline';
+</script>
 {% block scripts %}{% endblock %}
 
 </body>
