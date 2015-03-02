@@ -13,15 +13,17 @@
     <% _.each( matches, function( match ){%>
     <tr class="<% if ( match.status === 'close' ){ %>success<% } %>" id="match-<%= match.id %>">
       <td><%= match.round %></td>
-      <td class="text-center"><% if ( match.homePlayer.team ){ %><img width="16" src="<%= match.homePlayer.team.teamEmblem %>"> <a
-          href="/seasons/<%= seasonId %>/games/<%= gameId %>/players/<%= match.homePlayer.id %>"><%=
-        match.homePlayer.playerName %><% } else { %><%=
-        match.homePlayer.playerName %><% } %></td>
+      <td class="text-center team-name"><% if ( match.homePlayer.team ){ %><img width="16" src="<%= match.homePlayer.team.teamEmblem %>"> <a
+          href="/seasons/<%= seasonId %>/games/<%= gameId %>/players/<%= match.homePlayer.id %>"><%= match.homePlayer.team.teamName %>(<%=
+        match.homePlayer.playerName %>)<% } else { %><%= match.homePlayer.team.teamName %>(<%=
+        match.homePlayer.playerName %>)<% } %></td>
       <td class="text-center"><a href="#" id="match-score-<%= match.id %>" data-type="address" data-pk="<%= match.id %>" data-title="경기결과입력"
                                  data-url="/games/<%= match.gameId %>/matches/<%= match.id %>"></a></td>
-      <td class="text-center"><% if ( match.awayPlayer.team ){ %><img width="16" src="<%= match.awayPlayer.team.teamEmblem %>"> <a
-          href="/seasons/<%= seasonId %>/games/<%= gameId %>/players/<%= match.awayPlayer.id %>""><%= match.awayPlayer.playerName %><% } else { %><%=
-        match.awayPlayer.playerName %><% } %></td>
+      <td class="text-center team-name"><% if ( match.awayPlayer.team ){ %><img width="16" src="<%= match.awayPlayer.team.teamEmblem %>"> <a
+          href="/seasons/<%= seasonId %>/games/<%= gameId %>/players/<%= match.awayPlayer.id %>""><%= match.awayPlayer.team.teamName %>(<%=
+        match.awayPlayer.playerName %>)<% } else {
+        %><%= match.awayPlayer.team.teamName %>(<%=
+        match.awayPlayer.playerName %>)<% } %></td>
       <td class="right"><span id="match-fn-delete-<%= match.id %>" data-toggle="tooltip" data-placement="top" title="경기결과 초기화" style="cursor:pointer;"
                               class="glyphicon glyphicon-remove <% if ( match.status === 'open' ){ %>hide<% } %>"
                               data-match-id="<%= match.id %>" aria-hidden="true"></span></td>
