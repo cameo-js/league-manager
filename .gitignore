@@ -3,3 +3,4 @@ node_modules
 *.iml
 database.sqlite.development
 database.sqlite.production
+database.sqlite
