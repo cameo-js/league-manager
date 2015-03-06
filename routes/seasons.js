@@ -266,7 +266,7 @@ router.get('/:id/games/:gameId/players/:playerId', function(req, res, next){
  ) s1 group by s1.playerId, s1.playerName
  ) z1 order by z1.win*3+z1.draw desc
  */
-var standingsQuery = "select z1.* , z1.win*3 + z1.draw points,\n" +
+var standingsQuery = "select z1.* , z1.win*3 + z1.draw points, (z1.win*3+z1.draw)*1000 + (z1.for-z1.against)*100 weight, \n" +
     "\tteamId, ( select teamName from Teams where id = z1.teamId ) teamName, ( select teamEmblem from Teams where id = z1.teamId ) teamEmblem\n" +
     "from (\n" +
     "\tselect s1.playerId, s1.playerName, sum(played) played , teamId,\n" +
@@ -306,6 +306,6 @@ var standingsQuery = "select z1.* , z1.win*3 + z1.draw points,\n" +
     "\t\t\tt1.gameId = {gameId}\n" +
     "\t\t\tand t2.status = 'close'\n" +
     "\t) s1 group by s1.playerId, s1.playerName\n" +
-    ") z1 order by z1.win*3+z1.draw desc";
+    ") z1 order by (z1.win*3+z1.draw)*1000 + (z1.for-z1.against)*100 desc";
 
 module.exports = router;

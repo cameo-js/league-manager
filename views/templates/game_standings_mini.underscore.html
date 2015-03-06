@@ -13,15 +13,21 @@
   </thead>
   <tbody>
   <%
-    var rangking_tr_class = {
-      1: 'info',
-      2: 'warning',
-      3: 'success'
-    };
+  var ranking_tr_class = {
+  1: 'info',
+  2: 'warning',
+  3: 'success'
+  };
   %>
-  <% _.each( standings, function( s, idx, list ){ %>
-  <tr class="<%= rangking_tr_class[idx+1] %>">
-    <td><%= idx+1 %></td>
+  <%
+  var beforeWeight = 0;
+  var ranking = 0;
+  _.each( standings, function( s, idx, list ){
+    if( s.weight != beforeWeight ) ranking = idx + 1;
+    beforeWeight = s.weight;
+  %>
+  <tr class="<%= ranking_tr_class[idx+1] %>">
+    <td><%= ranking %></td>
     <td class="right team-name"><img class="team-emblem" width="16" src="<%= s.teamEmblem %>"
         > <a href="/seasons/<%= seasonId %>/games/<%= gameId %>/players/<%= s.playerId %>"><%= s.teamName %> ( <%= s.playerName %> )</a></td>
     <td class="right"><%= s.played %></td>
