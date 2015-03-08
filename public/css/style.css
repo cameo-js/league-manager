@@ -4,18 +4,96 @@ h3.thin {
 }
 
 hr.thin {
-    margin-top: 15px;
-    margin-bottom: 15px;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 .tab-pane-component{
     margin-top : 10px;
 }
 
+/* facebook login btn */
+.fb-login-button{
+    margin-bottom : 6px;
+}
+
+/* facebook */
+.me-profile {
+    float: left;
+}
+
+.me-profile_img {
+    width: 25px;
+    border-radius: 3px;
+    margin-right: 3px;
+    border: solid 2px;
+}
+
+/* comment */
+.comment-container{
+    padding-bottom: 15px;
+    margin-bottom: 10px;
+    border-bottom: solid #EEE 1px;
+}
+
+.comment-fn{
+    float: right;
+    cursor: pointer;
+}
+
+.comment-attr{
+    font-family: Helvetica, arial, freesans, clean, sans-serif, 'Segoe UI Emoji', 'Segoe UI Symbol';
+    font-weight: bold;
+    font-size: 12px;
+    margin-bottom: 5px;
+}
+.comment-attr > small {
+    font-weight: normal;
+}
+
+.comment-profile{  
+    float: left;
+    margin-right: 10px;
+}
+
+.comment-profile-img {
+    width: 30px;
+    border-radius: 3px;
+    margin-right: 3px;
+    border: solid 1px;
+}
+
+.comment {
+    font-size: 13px;
+    white-space: pre;
+}
+
 /* standings */
 .team-name {
     font-size:12px;
 }
+.match .team-name{
+    font-size:16px;
+    font-weight:600;
+}
+
 .team-emblem {
     vertical-align: text-bottom;
+}
+
+/* match and schedule */
+.deactivated {
+    color: rgb(216, 210, 210);
+}
+
+.glyphicon {
+    padding-left: 2px;
+    padding-right: 2px;
+}
+
+/* match */
+.match .score{
+    font-size: 18px;
+    font-weight: 600;
+    white-space: nowrap;
 }
