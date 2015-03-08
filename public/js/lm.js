@@ -12,7 +12,20 @@
     context: function () {
       return LM.global.context
     },
+    callDELETE: function (url_except_context, params, success, dataType, async) {
+      if (!dataType) dataType = "json";
+      if (typeof async === "undefined")
+        async = true;
 
+      return $.ajax({
+        type: "DELETE",
+        url: LM.service.context() + url_except_context,
+        data: params,
+        async: async,
+        success: success,
+        dataType: dataType
+      });
+    },
     callPOST: function (url_except_context, params, success, dataType, async) {
       if (!dataType) dataType = "json";
       if (typeof async === "undefined")
@@ -60,6 +73,17 @@
   LM.api.matches = {
     reset : function( gameId, matchId, success ){
       return LM.service.callPOST('/games/' + gameId + '/matches/' + matchId + '/reset' , {}, success );
+    }
+  }
+  LM.api.comments = {
+    getMatchComments : function( matchId, success ){
+      return LM.service.callGET('/comments/match', { matchId : matchId }, success );
+    },
+    create: function( params, success ) {
+      return LM.service.callPOST('/comments', params, success );
+    },
+    delete: function( commentId, success ){
+      return LM.service.callDELETE('/comments', {commentId: commentId}, success );
     }
   }
 

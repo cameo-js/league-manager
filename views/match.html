@@ -1,0 +1,195 @@
+{% extends 'default_layout.html' %}
+{% block fbblock %}
+<script>
+  function statusChangeCallback(response) {
+    if (response.status === 'connected') {
+      // Logged into your app and Facebook.
+      welcome();
+    } else if (response.status === 'not_authorized') {
+      console.log('Please log ' + 'into this app.');
+    } else {
+      console.log('Please log ' + 'into Facebook.');
+      $("#comment_content").attr('readonly', 'readonly');
+      $("#comment_btn").attr('disabled', 'disabled');
+    }
+  }
+
+  function checkLoginState() {
+    FB.getLoginStatus(function (response) {
+      statusChangeCallback(response);
+    });
+  }
+
+  window.fbAsyncInit = function () {
+    FB.init({
+      appId: '806469956057307',
+      xfbml: true,
+      version: 'v2.2'
+    });
+
+    FB.getLoginStatus(function (response) {
+      statusChangeCallback(response);
+    });
+  };
+
+  (function (d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s);
+    js.id = id;
+    js.src = "//connect.facebook.net/ko_KR/sdk.js#xfbml=1&appId=806469956057307&version=v2.0";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+
+  function welcome() {
+//    FB.api('/me', function (response) {
+//      noty({
+//        layout: 'top',
+//        text: 'Welcome! ' + response.name
+//      });
+//    });
+
+    FB.api(
+        "/me/picture",
+        function (response) {
+          if (response && !response.error) {
+            $("#me-profile").html("<img class=\"me-profile_img\" src=\'" + response.data.url + "\'/>");
+          }
+        }
+    );
+    $("#comment_content").removeAttr("readonly");
+    $("#comment_btn").removeAttr("disabled");
+  }
+
+</script>
+{% endblock %}
+{% block content %}
+<div class="container-fluid">
+  {% include 'includes/game_title.html' %}
+  <h3 class="text-center">{{match.round}} 라운드</h3>
+  <hr>
+  <div class="row match">
+    <div class="col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-xs-4 col-sm-4 col-md-4 text-center team-name">{% if ( match.homePlayer.team )
+      %}<img width="30"
+             src="{{match.homePlayer.team.teamEmblem}}"
+          > <a
+          href="../players/{{ match.homePlayer.id }}">{{ match.homePlayer.team.teamName }}<br/>({{
+        match.homePlayer.playerName }}){% else %}({{
+        match.homePlayer.playerName }}){% endif %}</div>
+    <div class="col-xs-2 col-sm-2 col-md-2 text-center score">{{match.homeScore}} vs {{match.awayScore}}</div>
+    <div class="col-xs-4 col-sm-4 col-md-4 text-center team-name">{% if ( match.awayPlayer.team ) %}<img width="30"
+                                                                                                         src="{{ match.awayPlayer.team.teamEmblem }}"
+        > <a href="../players/{{ match.awayPlayer.id }}">{{ match.awayPlayer.team.teamName }}<br/>({{
+      match.awayPlayer.playerName }}){% else %}({{
+      match.awayPlayer.playerName }}){% endif %}</a>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid">
+  <hr class="thin"/>
+  <div class="row">
+    <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-8 col-md-offset-2">
+
+      <textarea class="form-control" placeholder="facebook login first!!!" id="comment_content" rows="3"></textarea>
+
+      <div style="margin-top:5px;">
+        <span class="me-profile" id="me-profile"></span>
+        <span class="fb-login-button" onlogin="checkLoginState();" data-show-faces="false" scope="public_profile,email" data-max-rows="1"
+            data-size="large"
+            data-auto-logout-link="true"></span>
+        <input type="hidden" name="writerId"/>
+        <input type="hidden" name="writerName"/>
+        <div class="pull-right">
+          <button id="comment_btn" class="btn btn-success">Comment</button>
+        </div>
+        <hr class="thin"/>
+        <div id="comment-list"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+  $(function () {
+    var gameId = {{game.id}};
+    var matchId = {{match.id}};
+    load_comments( matchId );
+
+    $("#comment_btn").on("click", function(e){
+      FB.api('/me', function (me) {
+        FB.api("/me/picture",
+            function( picture ){
+              if( picture && !picture.err ){
+                var params = {
+                  matchId : matchId,
+                  writerId : me.id,
+                  writerName : me.name,
+                  writerProfileImg: picture.data.url,
+                  content : $("#comment_content").val(),
+                  gameId : gameId
+                };
+
+                LM.api.comments.create( params, function( resp ){
+                  var template = _.template( $("#comment_container_tpl").html() );
+                  $('#comment-list').append(template(resp.comment));
+                  $('#comment_content').val("");
+                  noty({
+                    text : 'Comment 를 등록했습니다.'
+                  });
+                  
+                });
+              }
+            });
+      });
+
+    });
+  });
+  
+  function load_comments( matchId ){
+    LM.api.comments.getMatchComments( matchId, function( resp ){
+      var template = _.template( $("#comment_container_tpl").html() );
+      var comments = resp.comments;
+      _.each( comments, function( comment, idx, list ) {
+        console.log( comment );
+        $('#comment-list').append(template(comment));
+      });
+      $("span.comment-fn>span.glyphicon-remove").on('click', function( e ){
+        var id = $(this).attr("comment-id");
+        noty({
+          text: 'Comment 를 삭제합니다. 정말?',
+          layout: 'center',
+          type: 'error',
+          buttons: [
+            {addClass: 'btn btn-primary', text: 'Yes', onClick: $.proxy(function($noty) {
+              LM.api.comments.delete( $(this).attr("comment-id"), function( resp ){
+                $("#comment-container-" + id).remove();
+              } );
+              $noty.close();
+            }, this)
+            },
+            {addClass: 'btn btn-danger', text: 'No', onClick: function($noty) {
+              $noty.close();
+            }
+            }
+          ]
+        });
+      });
+    });
+  }
+</script>
+    
+<script id="comment_container_tpl" type="text/template">
+  <div class="comment-container" id="comment-container-<%= id %>">
+    <div class="comment-attr"><%= writerName %>, commented on match / <small><%= createdAt %></small></div>
+    <span class="comment-fn"><span class="glyphicon glyphicon-remove" comment-id="<%= id %>"></span></span></span>
+    <div class="comment-content">
+      <span class="comment-profile"><img class="comment-profile-img" src="<%= writerProfileImg %>"/></span>
+      <span class="comment"><%= content %></span>
+    </div>
+  </div>
+</script>    
+{% endblock %}

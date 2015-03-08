@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta property="fb:admins" content="sehan.choi"/>
   <title>League Manager v0.1</title>
 
   {% block head %}
@@ -21,11 +22,11 @@
       padding-top: 70px;
     }
   </style>
-
   {% endblock %}
+  {% block extra-head %}{% endblock %}
 </head>
 <body>
-
+{% block fbblock %}{% endblock %}
 <nav class="navbar navbar-default navbar-fixed-top">
   <div class="container-fluid">
     <div class="navbar-header">
@@ -79,8 +80,9 @@
 <script src="/js/x-editable/address.js"></script>
 <script src="/js/lm.js"></script>
 <script>
-  $.noty.defaults.layout = 'topCenter';
-  $.noty.defaults.timeout = 1000;
+  $.noty.defaults.layout = 'center';
+  $.noty.defaults.timeout = 1300;
+  $.noty.defaults.type = 'success';
 
   $.fn.editable.defaults.mode = 'inline';
 </script>

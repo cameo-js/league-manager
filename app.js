@@ -13,6 +13,7 @@ var seasons = require('./routes/seasons');
 var games = require('./routes/games');
 var teams = require('./routes/teams');
 var matches = require('./routes/matches');
+var comments = require('./routes/comments');
 
 var app = express();
 
@@ -36,6 +37,7 @@ app.use('/', routes);
 app.use('/seasons', seasons);
 app.use('/games', games );
 app.use('/teams', teams );
+app.use('/comments', comments );
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
