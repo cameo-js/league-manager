@@ -14,6 +14,7 @@ module.exports = function (sequelize, DataTypes) {
       associate: function (models) {
         Match.belongsTo(models.Player, {as: 'homePlayer'});
         Match.belongsTo(models.Player, {as: 'awayPlayer'});
+        Match.hasMany(models.Comment, { foreignKey: 'matchId'});
       }
     }
   });

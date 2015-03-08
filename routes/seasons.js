@@ -167,6 +167,26 @@ router.get('/:id/games/:gameId', function (req, res, next) {
   });
 });
 
+router.get('/:id/games/:gameId/matches/:matchId', function (req, res, next) {
+  models.Season.findOne({where: {id: req.params.id}}).then(function (season) {
+    season.getGames().then(function (games) {
+      season.games = games;
+      var context = {season: season};
+
+      models.Game.findOne({where: {seasonId: req.params.id, id: req.params.gameId}}).then(function (game) {
+        context.game = game;
+        game.getMatches( { where: {id: req.params.matchId}, include: [{all: true, include: [{all: true}]}] }).then( function( matches ){
+          
+          context.match = matches[0];
+          res.render('match', context);
+        });
+
+      });
+    });
+  });
+});
+
+
 router.get('/:id/games/:gameId/settings/players', function (req, res, next) {
   models.Season.findOne({where: {id: req.params.id}}).then(function (season) {
     season.getGames().then(function (games) {
@@ -187,7 +207,7 @@ router.get('/:id/games/:gameId/settings/players', function (req, res, next) {
 
 router.get('/:id/games/:gameId/matches_and_schedule', function (req, res, next) {
   models.Game.findOne({where: {id: req.params.gameId}}).complete(function (err, game) {
-    game.getMatches({include: [{all: true, include: [{all: true}]}], order: 'round'}).then(function (matches) {
+    game.getMatches({include: [{all:true, include: [{all:true}]}], order: 'Match.round'}).then(function (matches) {
       res.json({matches: matches});
     })
   });

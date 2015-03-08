@@ -3,6 +3,8 @@
 {% block content %}
 <div class="container-fluid">
   {% include 'includes/game_title.html' %}
+  <div id="status">
+  </div>
   <hr class="thin"/>
   <ul class="nav nav-pills" id="game-menu">
     <li role="presentation"><a href="#standings">Standings</a></li>
@@ -32,7 +34,6 @@
     var gameId = {{game.id}};
     // game page variables
 
-  
     render_standings( seasonId, gameId );
 
     $('#game-menu a').click(function (e) {
@@ -66,21 +67,38 @@
       $('#game-menu a[href="#matches_and_schedule"]').tab('show')
       $('[data-toggle="tooltip"]').tooltip()
       
+      // 경기결과 reset 버튼 이벤트
       $('td > span.glyphicon-remove').on('click', function(e){
-        console.log( $(this).attr('data-match-id') );
-        var matchId = $(this).attr('data-match-id');
-        LM.api.matches.reset( gameId, matchId, function( res ){
-          if( res.success ){
-            $("#match-fn-delete-" + matchId).addClass('hide');
-            $("#match-score-" + matchId).html('결과입력');
-            $("#match-" + matchId).removeClass('success');
 
-            noty({
-              text: '경기결과를 초기화 했습니다.',
-              type: 'success',
-              timeout: 1000
-            });
-          }
+        noty({
+          text: '정말 경기결과를 초기화 할까요?',
+          layout: 'center',
+          type: 'error',
+          buttons: [
+            {addClass: 'btn btn-primary', text: 'Yes', onClick: $.proxy(function($noty) {
+                var matchId = $(this).attr('data-match-id');
+                LM.api.matches.reset( gameId, matchId, function( res ){
+                  if( res.success ){
+                    $("#match-fn-delete-" + matchId).addClass('hide');
+                    $("#match-score-" + matchId).html('결과입력');
+                    $("#match-" + matchId).removeClass('success');
+
+                    noty({
+                      text: '경기결과를 초기화 했습니다.',
+                      layout: 'center',
+                      type: 'success',
+                      timeout: 1000
+                    });
+                  }
+                });
+                $noty.close();
+              }, this)
+            },
+            {addClass: 'btn btn-danger', text: 'No', onClick: function($noty) {
+              $noty.close();
+            }
+            }
+          ]
         });
       });
       

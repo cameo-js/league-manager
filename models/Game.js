@@ -11,6 +11,7 @@ module.exports = function (sequelize, DataTypes) {
       associate: function (models) {
         Game.hasMany(models.Player, { foreignKey : 'gameId' });
         Game.hasMany(models.Match, { foreignKey : 'gameId' });
+        Game.hasMany(models.Comment, { foreignKey : 'gameId' });
       }
     }
   });
