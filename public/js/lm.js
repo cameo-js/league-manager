@@ -79,6 +79,10 @@
     getMatchComments : function( matchId, success ){
       return LM.service.callGET('/comments/match', { matchId : matchId }, success );
     },
+    getAll : function( success ){
+      return LM.service.callGET('/comments', {}, success );
+      
+    },
     create: function( params, success ) {
       return LM.service.callPOST('/comments', params, success );
     },
