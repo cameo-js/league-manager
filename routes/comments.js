@@ -2,6 +2,16 @@ var models = require('../models');
 var express = require('express');
 var router = express.Router();
 
+router.get('/', function( req, res, next ){
+  var offset = req.params.offset || 0;
+  var limit = req.params.limit || 25;
+  models.Comment.findAll({ order: [['createdAt', 'DESC']], offset: offset, limit: limit }).then(
+      function( comments ){
+        res.json( { comments : comments });
+      }
+  );
+});
+
 router.get('/match', function( req, res, next ){
   models.Match.findOne( {
     where : { id : req.query.matchId }
@@ -11,6 +21,7 @@ router.get('/match', function( req, res, next ){
     });
   });
 });
+
 
 router.post('/', function( req, res, next ){
   models.Comment.create({

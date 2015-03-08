@@ -12,6 +12,7 @@
     </div>
     <div class="col-md-6 col-sm-6">
       <h4>Match talks</h4>
+      <div id="comment-list"></div>
     </div>
   </div>
 
@@ -26,11 +27,11 @@
     var gameIds =  [];
     {% for game in season.games %} gameIds.push({{game.id}}); {% endfor %}
 
-    console.log( gameIds );
-
     _.each( gameIds, function( gameId ){
       render_standings( seasonId, gameId );
     });
+  
+    render_matchtalks(seasonId);
   });
 
   function render_standings( seasonId, gameId ){
@@ -42,8 +43,22 @@
       $('#game-standings-' + gameId).html( template(data) );
     });
   }
+  
+  function render_matchtalks(seasonId){
+    LM.api.comments.getAll( function(resp){
+      var template = _.template( $("#comment_container_for_game_tpl").html() );
+      var comments = resp.comments;
+      _.each( comments, function( comment, idx, list ) {
+        console.log( comment );
+        comment.seasonId = seasonId;
+        $('#comment-list').append(template(comment));
+      });
+            
+    });
+  }
+  
 </script>
 {% include 'templates/game_standings_mini.underscore.html' %}
-
+{% include 'templates/comment_container_for_game.underscore.html' %}
 {% endblock %}
 
