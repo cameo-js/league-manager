@@ -3,9 +3,9 @@
     <thead>
     <tr>
       <th class="text-left" style="width:10px;">R</th>
-      <th class="text-center col-xs-4 col-md-3">Home</th>
+      <th class="text-center col-xs-3 col-md-3">Home</th>
       <th class="text-center" style="width:70px;">vs</th>
-      <th class="text-center col-xs-4 col-md-3">Away</th>
+      <th class="text-center col-xs-3 col-md-3">Away</th>
       <th class="text-left">Fn</th>
     </tr>
     </thead>
@@ -14,13 +14,13 @@
     <tr class="<% if ( match.status === 'close' ){ %>success<% } %>" id="match-<%= match.id %>">
       <td><%= match.round %></td>
       <td class="text-center team-name"><% if ( match.homePlayer.team ){ %><img width="16" src="<%= match.homePlayer.team.teamEmblem %>"> <a
-          href="<%= gameId %>/players/<%= match.homePlayer.id %>"><%= match.homePlayer.team.teamName %>(<%=
+          href="<%= gameId %>/players/<%= match.homePlayer.id %>"><%= match.homePlayer.team.teamName %> (<%=
         match.homePlayer.playerName %>)<% } else { %><%= match.homePlayer.team.teamName %>(<%=
         match.homePlayer.playerName %>)<% } %></td>
       <td class="text-center"><a href="#" id="match-score-<%= match.id %>" data-type="address" data-pk="<%= match.id %>" data-title="경기결과입력"
                                  data-url="/games/<%= match.gameId %>/matches/<%= match.id %>"></a></td>
       <td class="text-center team-name"><% if ( match.awayPlayer.team ){ %><img width="16" src="<%= match.awayPlayer.team.teamEmblem %>"> <a
-          href="<%= gameId %>/players/<%= match.awayPlayer.id %>""><%= match.awayPlayer.team.teamName %>(<%=
+          href="<%= gameId %>/players/<%= match.awayPlayer.id %>""><%= match.awayPlayer.team.teamName %> (<%=
         match.awayPlayer.playerName %>)<% } else {
         %><%= match.awayPlayer.team.teamName %>(<%=
         match.awayPlayer.playerName %>)<% } %></td>
