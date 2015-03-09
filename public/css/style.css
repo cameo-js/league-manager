@@ -66,6 +66,7 @@ hr.thin {
 .comment {
     font-size: 13px;
     white-space: pre;
+    word-wrap: break-word;
 }
 
 /* standings */
