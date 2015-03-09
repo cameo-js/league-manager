@@ -10,8 +10,18 @@
     </tr>
     </thead>
     <tbody>
-    <% _.each( matches, function( match ){%>
-    <tr class="<% if ( match.status === 'close' ){ %>success<% } %>" id="match-<%= match.id %>">
+    <% 
+    var beforeRound = 0;
+    var tr_class = '';
+    _.each( matches, function( match, idx, list ){
+      if( beforeRound != match.round ) {
+        if( tr_class === 'warning' ) tr_class = ''
+        else tr_class = 'warning';
+      }
+
+      beforeRound = match.round ;
+    %>
+    <tr class="<% if ( match.status === 'close' ) { %>success<% } else { %><%= tr_class %><% } %>" id="match-<%= match.id %>">
       <td><%= match.round %></td>
       <td class="text-center team-name"><% if ( match.homePlayer.team ){ %><img width="16" src="<%= match.homePlayer.team.teamEmblem %>"> <a
           href="<%= gameId %>/players/<%= match.homePlayer.id %>"><%= match.homePlayer.team.teamName %> (<%=
