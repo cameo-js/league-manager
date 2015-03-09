@@ -217,7 +217,7 @@ router.get('/:id/games/:gameId/standings', function (req, res, next) {
 
   models.sequelize.query(format(standingsQuery, {gameId: req.params.gameId})).complete(function (err, rows) {
     //if( err ) console.log( err );
-    console.log(rows[0]);
+    //console.log(rows[0]);
     res.json({standings: rows[0]})
   });
 });

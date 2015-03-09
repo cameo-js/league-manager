@@ -8,18 +8,18 @@
   <hr class="thin"/>
   <ul class="nav nav-pills" id="game-menu">
     <li role="presentation"><a href="#standings">Standings</a></li>
-    <li role="presentation"><a href="#recently_result">Recently Result</a></li>
     <li role="presentation"><a href="#matches_and_schedule">Matches / Schedule</a></li>
+    <li role="presentation"><a href="#recently_result">Recently Result</a></li>
   </ul>
 
   <!-- Tab panes -->
   <div class="tab-content">
     <div role="tabpanel" class="tab-pane" id="standings">
     </div>
+    <div role="tabpanel" class="tab-pane" id="matches_and_schedule">
+    </div>
     <div role="tabpanel" class="tab-pane" id="recently_result">
       {% include 'templates/game_recently_result.html' %}
-    </div>
-    <div role="tabpanel" class="tab-pane" id="matches_and_schedule">
     </div>
   </div>
 </div>
@@ -34,18 +34,38 @@
     var gameId = {{game.id}};
     // game page variables
 
-    render_standings( seasonId, gameId );
+    if(window.location.hash) {
+      var tabName = window.location.hash.replace('#','');
+//      console.log( tabName );
+      switch(tabName) {
+        case 'standings':
+          render_standings( seasonId, gameId );
+          break;
+        case 'matches_and_schedule':
+          render_matches_and_schedule( seasonId, gameId );
+          break;
+        default:
+          render_standings( seasonId, gameId );
+      }
+    } else {
+      render_standings( seasonId, gameId );
+    }
 
     $('#game-menu a').click(function (e) {
       e.preventDefault();
-      if( $(this).attr("href") === "#standings" )
-        render_standings( seasonId, gameId );
-      if( $(this).attr("href") === "#matches_and_schedule" )
-        render_matches_and_schedule( seasonId, gameId );
+      
+      if( $(this).attr("href") === "#standings" ) {
+        render_standings(seasonId, gameId);
+        window.location.hash = "standings";
+      }
+      if( $(this).attr("href") === "#matches_and_schedule" ) {
+        render_matches_and_schedule(seasonId, gameId);
+        window.location.hash = "matches_and_schedule";
+      }
     });
   
   });
-
+  
   function render_standings( seasonId, gameId ){
     var template = _.template( $("#game_standings_tpl").html() );
     LM.api.games.getStandings( seasonId, gameId, function( data ){
