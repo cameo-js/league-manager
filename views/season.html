@@ -3,14 +3,14 @@
 {% block content %}
 <div class="container-fluid">
   <div class="row">
-    <div class="col-md-6 col-sm-6">
+    <div class="col-sx-6 col-md-6 col-sm-6">
       {% for game in season.games %}
       <a href="/seasons/{{season.id}}/games/{{game.id}}"><h4>{{game.gameName}} <small>standings</small></h4></a>
       <div id="game-standings-{{game.id}}"></div>
       <hr>
       {% endfor %}
     </div>
-    <div class="col-md-6 col-sm-6">
+    <div class="col-xs-6 col-md-6 col-sm-6">
       <h4>Match talks</h4>
       <div id="comment-list"></div>
     </div>

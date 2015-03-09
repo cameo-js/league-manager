@@ -25,9 +25,12 @@
         %><%= match.awayPlayer.team.teamName %>(<%=
         match.awayPlayer.playerName %>)<% } %></td>
       <td class="right">
-        <a href="<%= gameId %>/matches/<%= match.id %>"><span class="glyphicon glyphicon-comment deactivated" data-toggle="tooltip"
+        <a href="<%= gameId %>/matches/<%= match.id %>"><span 
+            class="glyphicon glyphicon-comment <% if ( match.Comments.length == 0 ) { %>deactivated<% } %>"
+                                                              data-toggle="tooltip"
                                                               data-placement="top" title="Match Talk 보기"
-                                                              style="cursor:pointer;"></span></a>
+                                                              style="cursor:pointer;"></span> <% if ( match.Comments.length > 0 ) { %><%= match
+          .Comments.length %><% } %></a>
         <span id="match-fn-delete-<%= match.id %>" data-toggle="tooltip" data-placement="top" title="경기결과 초기화" style="cursor:pointer;"
                               class="glyphicon glyphicon-remove <% if ( match.status === 'open' ){ %>hide<% } %>"
                               data-match-id="<%= match.id %>" aria-hidden="true"></span>
