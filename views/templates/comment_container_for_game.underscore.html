@@ -1,6 +1,7 @@
 <script id="comment_container_for_game_tpl" type="text/template">
   <div class="comment-container" id="comment-container-<%= id %>">
-    <div class="comment-attr"><%= writerName %>, commented on <a href="<%= seasonId %>/games/<%= gameId %>/matches/<%= matchId %>">match</a> /
+    <div class="comment-attr"><%= writerName %>, commented on <a
+        href="<%= seasonId %>/games/<%= gameId %>/matches/<%= matchId %>"><%= game.gameName %>,<%= match.round %> Round match</a> /
       <small><%= createdAt %></small></div>
     <div class="comment-content">
       <span class="comment-profile"><img class="comment-profile-img" src="<%= writerProfileImg %>"/></span>

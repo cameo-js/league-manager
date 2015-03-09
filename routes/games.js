@@ -28,7 +28,7 @@ router.post('/:gameId/matches/:matchId', function (req, res, next) {
         var msg = game.gameName + ': ' + match.round + ' 라운드 경기결과\n' +
             match.homePlayer.team.teamName + '(' + match.homePlayer.playerName + ') vs ' + match.awayPlayer.team.teamName + '(' + match.awayPlayer.playerName + ')\n' +
             match.homeScore + ' : ' + match.awayScore + '\n' +
-            'http://lemon.daumtools.com/seasons/' + game.seasonId + '/games/' + req.params.gameId;
+            'http://lemon.daumtools.com/seasons/' + game.seasonId + '/games/' + req.params.gameId + '/matches/' + req.params.matchId;
         wt_sender.send('lemon', msg);
         res.json({status: 200, success: true, message: 'success to update match', values: values});
       })
