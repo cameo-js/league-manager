@@ -38,6 +38,7 @@ app.use('/seasons', seasons);
 app.use('/games', games );
 app.use('/teams', teams );
 app.use('/comments', comments );
+app.use('/matches', matches );
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

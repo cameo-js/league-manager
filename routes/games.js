@@ -41,6 +41,7 @@ router.post('/:gameId/matches/:matchId/reset', function (req, res, next) {
     var values = {
       homeScore: null,
       awayScore: null,
+      updatedAt: null,
       status: 'open'
     };
     match.update(values).complete(function (err, player) {
