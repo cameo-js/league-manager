@@ -23,7 +23,7 @@
     <span class="match-team text-left"><% if ( match.awayPlayer.team ){ %><img width="16" src="<%= match.awayPlayer.team.teamEmblem %>"> <a
       href="<%= seasonId %>/games/<%= match.gameId %>/players/<%= match.awayPlayer.id %>"><%= match.awayPlayer.team.teamName %><% } else {
         %><%= match.awayPlayer.team.teamName %><% } %></a></span>
-    <span class="match-talk"><a href="<%= gameId %>/matches/<%= match.id %>"><span
+    <span class="match-talk"><a href="<%= seasonId %>/games/<%= gameId %>/matches/<%= match.id %>"><span
         class="glyphicon glyphicon-comment <% if ( match.Comments.length == 0 ) { %>deactivated<% } %>"
         data-toggle="tooltip"
         data-placement="top" title="Match Talk 보기"
