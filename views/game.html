@@ -65,15 +65,27 @@
     });
   
   });
-  
+
   function render_standings( seasonId, gameId ){
-    var template = _.template( $("#game_standings_tpl").html() );
-    LM.api.games.getStandings( seasonId, gameId, function( data ){
-      data.seasonId = seasonId;
-      data.gameId = gameId;
-      $('#standings').html( template(data) );
-      $('#game-menu a[href="#standings"]').tab('show')
-    });
+      var template = _.template( $("#game_standings_tpl").html() );
+      LM.api.games.getStandings( seasonId, gameId, function( data ){
+          data.seasonId = seasonId;
+          data.gameId = gameId;
+          $('#standings').html( template(data) );
+          $('#game-menu a[href="#standings"]').tab('show')
+          sort();
+      });
+
+      function sort() {
+          var tbl = $(".standings-table").stupidtable();
+          tbl.on("aftertablesort", function (event, data) {
+              var th = $(this).find("th");
+              th.find(".arrow").remove();
+              var dir = $.fn.stupidtable.dir;
+              var arrow = data.direction === dir.ASC ? "&uarr;" : "&darr;";
+              th.eq(data.column).append('<span class="arrow">' + arrow + '</span>');
+          });
+      }
   }
 
   function render_matches_and_schedule( seasonId, gameId ){
