@@ -1,0 +1,35 @@
+<script id="game_recent_matches_tpl" type="text/template">
+<div class="recent-matches-header"></div>
+<div class="recent-matches-body">
+  <%
+  var beforeRound = 0;
+  var tr_class = '';
+  _.each( matches, function( match, idx, list ){
+    if( beforeRound != match.round ) {
+      if( tr_class === 'warning' ) tr_class = ''
+      else tr_class = 'warning';
+    }
+  
+    beforeRound = match.round ;
+  %>
+  <div class="match <%= tr_class %>">
+    <%= match.round %>R <span class="match-team text-right"><% if ( match.homePlayer.team ){ %><img
+      width="16" src="<%= match.homePlayer.team.teamEmblem %>"> <a
+      href="<%= seasonId %>/games/<%= match.gameId %>/players/<%= match.homePlayer.id %>"><%= match.homePlayer.team.teamName %><% } else { %><%=
+    match.homePlayer.team.teamName
+    %><% } %></a></span>
+    <span class="match-score text-center"><% if (match.status === 'close' ){ %><%= match.homeScore %> vs <%= match.awayScore %><% } else { %>
+      경기전 <% } %></span>
+    <span class="match-team text-left"><% if ( match.awayPlayer.team ){ %><img width="16" src="<%= match.awayPlayer.team.teamEmblem %>"> <a
+      href="<%= seasonId %>/games/<%= match.gameId %>/players/<%= match.awayPlayer.id %>"><%= match.awayPlayer.team.teamName %><% } else {
+        %><%= match.awayPlayer.team.teamName %><% } %></a></span>
+    <span class="match-talk"><a href="<%= gameId %>/matches/<%= match.id %>"><span
+        class="glyphicon glyphicon-comment <% if ( match.Comments.length == 0 ) { %>deactivated<% } %>"
+        data-toggle="tooltip"
+        data-placement="top" title="Match Talk 보기"
+        style="cursor:pointer;"></span> <% if ( match.Comments.length > 0 ) { %><%= match
+      .Comments.length %><% } %></a></span>
+  </div>
+  <% }) %>
+</div>
+</script>

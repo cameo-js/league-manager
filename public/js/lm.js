@@ -90,7 +90,11 @@
   LM.api.matches = {
     reset : function( gameId, matchId, success ){
       return LM.service.callPOST('/games/' + gameId + '/matches/' + matchId + '/reset' , {}, success );
+    },
+    getRecentMatches : function( seasonId, gameId, success ){
+      return LM.service.callGET('/matches/recent', { seasonId : seasonId, gameId : gameId }, success );
     }
+    
   }
   LM.api.comments = {
     getMatchComments : function( matchId, success ){

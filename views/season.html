@@ -3,14 +3,21 @@
 {% block content %}
 <div class="container-fluid">
   <div class="row">
-    <div class="col-sx-6 col-md-6 col-sm-6">
+    <div class="col-sx-3 col-sm-3 col-md-3">
       {% for game in season.games %}
       <a href="/seasons/{{season.id}}/games/{{game.id}}"><h4>{{game.gameName}} <small>standings</small></h4></a>
       <div id="game-standings-{{game.id}}"></div>
       <hr>
       {% endfor %}
     </div>
-    <div class="col-xs-6 col-md-6 col-sm-6">
+    <div class="col-sx-4 col-sm-4 col-md-4">
+      {% for game in season.games %}
+      <a href="/seasons/{{season.id}}/games/{{game.id}}#matches_and_schedule"><h4>{{game.gameName}} <small>matches</small></h4></a>
+      <div id="game-recent-matches-{{game.id}}"></div>
+      <hr>
+      {% endfor %}
+    </div>
+    <div class="col-xs-5 col-md-5 col-sm-5">
       <h4>Match talks</h4>
       <div id="comment-list"></div>
     </div>
@@ -29,18 +36,29 @@
 
     _.each( gameIds, function( gameId ){
       render_standings( seasonId, gameId );
+      render_current_matches( seasonId, gameId );
     });
   
     render_matchtalks(seasonId);
   });
-
+  
+  function render_current_matches( seasonId, gameId ){
+    var template = _.template( $("#game_recent_matches_tpl").html());
+    LM.api.matches.getRecentMatches( seasonId, gameId, function( resp ){
+      resp.seasonId = seasonId;
+      resp.gameId = gameId;
+      $('#game-recent-matches-' + gameId).html( template( resp ));
+      $('[data-toggle="tooltip"]').tooltip()
+    });
+  }
+  
   function render_standings( seasonId, gameId ){
 
-    var template = _.template( $("#game_standings_mini_tpl").html() );
-    LM.api.games.getStandings( seasonId, gameId, function( data ){
-      data.seasonId = seasonId;
-      data.gameId = gameId;
-      $('#game-standings-' + gameId).html( template(data) );
+    var template = _.template( $("#game_standings_micro_mini_tpl").html() );
+    LM.api.games.getStandings( seasonId, gameId, function( resp ){
+      resp.seasonId = seasonId;
+      resp.gameId = gameId;
+      $('#game-standings-' + gameId).html( template(resp) );
     });
   }
   
@@ -58,7 +76,9 @@
   }
   
 </script>
+{% include 'templates/game_recent_matches.underscore.html' %}
 {% include 'templates/game_standings_mini.underscore.html' %}
+{% include 'templates/game_standings_micro_mini.underscore.html' %}
 {% include 'templates/comment_container_for_game.underscore.html' %}
 {% endblock %}
 

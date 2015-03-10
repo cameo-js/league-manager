@@ -1,0 +1,36 @@
+<script id="game_standings_micro_mini_tpl" type="text/template">
+<table class="table table-hover table-bordered table-condensed">
+  <thead>
+  <tr>
+    <th class="text-left">#</th>
+    <th class="text-left">Team</th>
+    <th class="text-left">Pts</th>
+  </tr>
+  </thead>
+  <tbody>
+  <%
+  var ranking_tr_class = {
+  1: 'info',
+  2: 'warning',
+  3: 'success'
+  };
+  %>
+  <%
+  var beforeWeight = 0;
+  var ranking = 0;
+  _.each( standings, function( s, idx, list ){
+    if( s.weight != beforeWeight ) ranking = idx + 1;
+    beforeWeight = s.weight;
+  %>
+  <tr class="<%= ranking_tr_class[idx+1] %>">
+    <td><%= ranking %></td>
+    <td class="right team-name small"><img class="team-emblem" width="16" src="<%= s.teamEmblem %>"
+        > <a href="/seasons/<%= seasonId %>/games/<%= gameId %>/players/<%= s.playerId %>"><%= s.teamName %></a></td>
+    <td class="right"><%= s.points %></td>
+  </tr>
+  <% }); %>
+
+  </tbody>
+  <tfoot></tfoot>
+</table>
+</script>
