@@ -55,7 +55,7 @@
   function render_standings( seasonId, gameId ){
 
     var template = _.template( $("#game_standings_micro_mini_tpl").html() );
-    LM.api.games.getStandings( seasonId, gameId, function( resp ){
+    LM.api.games.getStandings( gameId, function( resp ){
       resp.seasonId = seasonId;
       resp.gameId = gameId;
       $('#game-standings-' + gameId).html( template(resp) );

@@ -3,12 +3,146 @@
 {% block content %}
 <div class="container-fluid">
   {% include 'includes/game_title.html' %}
-  <h2 class="thin">{% if player.team %}<img height=150 src="{{player.team.teamEmblem}}"> {{player.team.teamName}}{% endif
-    %} <small>({{player.playerName}}) </small></h2>
-  <div>리그 승무패 , match and schedule</div>
+  <div class="player-basic-info">
+    {% if player.team %}<span class="player-team-emblem"><img height=150 src="{{player.team.teamEmblem}}"></span>
+    {{player.team.teamName}}
+    {% endif %} 
+    <span class="player-name">({{player.playerName}}) </span>
+    <div class="player-standing"></div>
+  </div>
+
+  <div id="matches_and_schedule">
 </div>
 {% endblock %}
 
 {% block scripts %}
+<script>
+  $(function () {
+    $.fn.editable.defaults.mode = 'popup';
+    
+    var seasonId = {{season.id}};
+    var gameId = {{game.id}};
+    var gameType = '{{game.gameType}}';
+    var playerId = {{player.id}};
+    
+    switch( gameType ){
+      case 'full-league' :
+      default :
+        render_player_standing( seasonId, gameId, playerId );
+        render_matches_and_schedule( seasonId, gameId, playerId );
+    }
 
+  });
+  
+  function render_player_standing( seasonId, gameId, playerId ){
+    LM.api.games.getStandings( gameId, function( resp ){
+      resp.seasonId = seasonId;
+      resp.gameId = gameId;
+
+      var beforeWeight = 0;
+      var ranking = 0;
+      var standings = {};
+      _.each( resp.standings, function( s, idx, list ) {
+        if (s.weight != beforeWeight) ranking = idx + 1;
+        beforeWeight = s.weight;
+
+        s.ranking = ranking;
+        standings[s.playerId] = s ;
+      });
+
+      var playerStanding = standings[playerId];
+      $(".player-standing").html( playerStanding.ranking + '위 (' + playerStanding.win + '승 ' + playerStanding.draw + '무 ' + playerStanding.lost + 
+      '패)' );
+    });
+  }
+
+//  TODO game 페이지에서 동일하게 사용되는 코드로 공통모듈로 처리하자. 지금은 copy & paste 함. ( game_matches_and_schedule_tpl 수정되면 game.html, player.html 모두 수정해야 함 )
+  function render_matches_and_schedule( seasonId, gameId, playerId ){
+
+    var template = _.template( $("#game_matches_and_schedule_tpl").html() );
+    LM.api.matches.getMatchesAndScheduleOfPlayer( gameId, playerId, function( data ){
+
+      console.log( data );
+
+      data.seasonId = seasonId;
+      data.gameId = gameId;
+
+      $('#matches_and_schedule').html( template(data) );
+
+      $('#game-menu a[href="#matches_and_schedule"]').tab('show')
+      $('[data-toggle="tooltip"]').tooltip()
+
+      // 경기결과 reset 버튼 이벤트
+      $('td > span.glyphicon-remove').on('click', function(e){
+
+        noty({
+          text: '정말 경기결과를 초기화 할까요?',
+          layout: 'center',
+          type: 'error',
+          buttons: [
+            {addClass: 'btn btn-primary', text: 'Yes', onClick: $.proxy(function($noty) {
+              var matchId = $(this).attr('data-match-id');
+              LM.api.matches.reset( gameId, matchId, function( res ){
+                if( res.success ){
+                  $("#match-fn-delete-" + matchId).addClass('hide');
+                  $("#match-score-" + matchId).html('결과입력');
+                  $("#match-" + matchId).removeClass('success');
+
+                  noty({
+                    text: '경기결과를 초기화 했습니다.',
+                    layout: 'center',
+                    type: 'success',
+                    timeout: 1000
+                  });
+                }
+              });
+              $noty.close();
+            }, this)
+            },
+            {addClass: 'btn btn-danger', text: 'No', onClick: function($noty) {
+              $noty.close();
+            }
+            }
+          ]
+        });
+      });
+
+      _.each( data.matches, function( match ){
+        $('td > a#match-score-' + match.id ).editable({
+          value: {
+            homeScore: match.homeScore,
+            awayScore: match.awayScore,
+            status : match.status
+          },
+          validate: function(value) {
+          },
+          display: function(value) {
+            if(!value) {
+              $(this).empty();
+              return;
+            }
+            var html;
+            if( value.status === 'open' )
+              html = '결과입력';
+            else
+              html = '<b>' + $('<span>').text(value.homeScore).html() + '</b> vs <b>'+ $('<span>').text(value.awayScore).html() + '</b>';
+            $(this).html(html);
+          }
+        });
+        $('td > a#match-score-' + match.id).on('save', function(e, params){
+          $("#match-" + match.id).addClass('success');
+          $("#match-fn-delete-" + match.id).removeClass('hide');
+          noty({
+            text: '경기결과가 저장되었습니다. 감사합니다. :)',
+            type: 'success',
+            timeout: 1000
+          });
+        });
+
+      });
+
+    });
+  }
+</script>
+{% include 'templates/game_matches_and_schedule.underscore.html' %}
 {% endblock %}

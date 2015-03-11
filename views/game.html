@@ -68,7 +68,7 @@
 
   function render_standings( seasonId, gameId ){
       var template = _.template( $("#game_standings_tpl").html() );
-      LM.api.games.getStandings( seasonId, gameId, function( data ){
+      LM.api.games.getStandings( gameId, function( data ){
           data.seasonId = seasonId;
           data.gameId = gameId;
           $('#standings').html( template(data) );
