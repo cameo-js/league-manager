@@ -71,6 +71,7 @@ hr.thin {
 }
 .player-team-emblem{
     float : left;
+    margin-right: 15px;
     
 }
 .player-name{
