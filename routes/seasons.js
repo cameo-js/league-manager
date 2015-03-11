@@ -213,15 +213,6 @@ router.get('/:id/games/:gameId/matches_and_schedule', function (req, res, next) 
   });
 });
 
-router.get('/:id/games/:gameId/standings', function (req, res, next) {
-
-  models.sequelize.query(format(standingsQuery, {gameId: req.params.gameId})).complete(function (err, rows) {
-    //if( err ) console.log( err );
-    //console.log(rows[0]);
-    res.json({standings: rows[0]})
-  });
-});
-
 router.get('/:id/games/:gameId/players/:playerId', function(req, res, next){
   models.Season.findOne({where: {id: req.params.id}}).then(function (season) {
     season.getGames().then(function (games) {
@@ -242,90 +233,5 @@ router.get('/:id/games/:gameId/players/:playerId', function(req, res, next){
   });
 });
 
-/* query */
-
-/* standings query
- select z1.* , z1.win*3 + z1.draw points
- from (
- select s1.playerId, s1.playerName, sum(played) played,
- sum(win) win,
- sum(draw) draw,
- sum(lost) lost,
- sum(for) for,
- sum(against) against
- from (
- select t1.id playerId, t1.playerName, 1 played,
- case when t2.homeScore > t2.awayScore then 1 else 0 end win,
- case when t2.homeScore = t2.awayScore then 1 else 0 end draw,
- case when t2.homeScore < t2.awayScore then 1 else 0 end lost,
- ifnull(t2.homeScore, 0) for, ifnull(t2.awayScore, 0 ) against
- from Players t1 join Matches t2 on ( t1.id = t2.homePlayerId )
- where
- t1.gameId = 1
- and t2.status = 'close'
- union all
- select t1.id playerId, t1.playerName, 0 played,
- 0 win,
- 0 draw,
- 0 lost,
- ifnull(t2.homeScore, 0) for, ifnull(t2.awayScore, 0 ) against
- from Players t1 join Matches t2 on ( t1.id = t2.homePlayerId )
- where
- t1.gameId = 1
- and t2.status = 'open'
- union all
- select t1.id playerId, t1.playerName, 1 played,
- case when t2.homeScore < t2.awayScore then 1 else 0 end win,
- case when t2.homeScore = t2.awayScore then 1 else 0 end draw,
- case when t2.homeScore > t2.awayScore then 1 else 0 end lost,
- ifnull(t2.awayScore, 0) for, ifnull(t2.homeScore, 0 ) against
- from Players t1 join Matches t2 on ( t1.id = t2.awayPlayerId )
- where
- t1.gameId = 1
- and t2.status = 'close'
- ) s1 group by s1.playerId, s1.playerName
- ) z1 order by z1.win*3+z1.draw desc
- */
-var standingsQuery = "select z1.* , z1.win*3 + z1.draw points, (z1.win*3+z1.draw)*1000 + (z1.for-z1.against)*100 weight, \n" +
-    "\tteamId, ( select teamName from Teams where id = z1.teamId ) teamName, ( select teamEmblem from Teams where id = z1.teamId ) teamEmblem\n" +
-    "from (\n" +
-    "\tselect s1.playerId, s1.playerName, sum(played) played , teamId,\n" +
-    "\t\tsum(win) win,\n" +
-    "\t\tsum(draw) draw,\n" +
-    "\t\tsum(lost) lost,\n" +
-    "\t\tsum(for) for,\n" +
-    "\t\tsum(against) against\n" +
-    "\tfrom (\n" +
-    "\t\tselect t1.id playerId, t1.playerName, 1 played,  t1.teamId,\n" +
-    "\t\t\tcase when t2.homeScore > t2.awayScore then 1 else 0 end win, \n" +
-    "\t\t\tcase when t2.homeScore = t2.awayScore then 1 else 0 end draw, \n" +
-    "\t\t\tcase when t2.homeScore < t2.awayScore then 1 else 0 end lost, \n" +
-    "\t\t\tifnull(t2.homeScore, 0) for, ifnull(t2.awayScore, 0 ) against\n" +
-    "\t\tfrom Players t1 join Matches t2 on ( t1.id = t2.homePlayerId )\n" +
-    "\t\twhere\n" +
-    "\t\t\tt1.gameId = {gameId}\n" +
-    "\t\t\tand t2.status = 'close'\n" +
-    "\t\tunion all\n" +
-    "\t\tselect t1.id playerId, t1.playerName, 0 played,  t1.teamId,\n" +
-    "\t\t\t0 win, \n" +
-    "\t\t\t0 draw, \n" +
-    "\t\t\t0 lost, \n" +
-    "\t\t\tifnull(t2.homeScore, 0) for, ifnull(t2.awayScore, 0 ) against\n" +
-    "\t\tfrom Players t1 join Matches t2 on ( t1.id = t2.homePlayerId )\n" +
-    "\t\twhere\n" +
-    "\t\t\tt1.gameId = {gameId}\n" +
-    "\t\t\tand t2.status = 'open'\n" +
-    "\t\tunion all\n" +
-    "\t\tselect t1.id playerId, t1.playerName, 1 played,  t1.teamId,\n" +
-    "\t\t\tcase when t2.homeScore < t2.awayScore then 1 else 0 end win, \n" +
-    "\t\t\tcase when t2.homeScore = t2.awayScore then 1 else 0 end draw, \n" +
-    "\t\t\tcase when t2.homeScore > t2.awayScore then 1 else 0 end lost, \n" +
-    "\t\t\tifnull(t2.awayScore, 0) for, ifnull(t2.homeScore, 0 ) against\n" +
-    "\t\tfrom Players t1 join Matches t2 on ( t1.id = t2.awayPlayerId )\n" +
-    "\t\twhere\n" +
-    "\t\t\tt1.gameId = {gameId}\n" +
-    "\t\t\tand t2.status = 'close'\n" +
-    "\t) s1 group by s1.playerId, s1.playerName\n" +
-    ") z1 order by (z1.win*3+z1.draw)*1000 + (z1.for-z1.against)*100 desc";
 
 module.exports = router;

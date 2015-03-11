@@ -75,8 +75,8 @@
 
   LM.api = {};
   LM.api.games = {
-    getStandings : function ( seasonId, gameId, success) {
-      return LM.service.callGET('/seasons/' + seasonId + '/games/' + gameId + '/standings', {}, success );
+    getStandings : function ( gameId, success) {
+      return LM.service.callGET('/games/' + gameId + '/standings', {}, success );
     },
     getMatchesAndSchedule : function( seasonId, gameId, success ){
       return LM.service.callGET('/seasons/' + seasonId + '/games/' + gameId + '/matches_and_schedule', {}, success );
@@ -93,8 +93,10 @@
     },
     getRecentMatches : function( seasonId, gameId, success ){
       return LM.service.callGET('/matches/recent', { seasonId : seasonId, gameId : gameId }, success );
+    },
+    getMatchesAndScheduleOfPlayer: function( gameId, playerId, success ){
+      return LM.service.callGET('/matches/player_matches_and_schedule', { gameId: gameId, playerId : playerId }, success );
     }
-    
   }
   LM.api.comments = {
     getMatchComments : function( matchId, success ){

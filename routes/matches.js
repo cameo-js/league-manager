@@ -4,6 +4,27 @@ var router = express.Router();
 
 var _ = require("underscore");
 
+router.get('/player_matches_and_schedule', function (req, res, next){
+  models.Game.findOne({
+    where: {
+      id: req.query.gameId
+    }
+  }).complete(function (err, game) {
+    game.getMatches({
+      include: [{all:true, include: [{all:true}]}],
+      where: {
+        $or: [
+          { homePlayerId : req.query.playerId },
+          { awayPlayerId : req.query.playerId }
+        ]
+      },
+      order: 'Match.round'
+    }).then(function (matches) {
+      res.json({matches: matches});
+    })
+  });
+});
+
 router.get('/recent', function (req, res, next) {
   models.Game.findOne({where: {id: req.query.gameId}}).complete(function (err, game) {
     var context = {
@@ -39,12 +60,9 @@ router.get('/recent', function (req, res, next) {
         res.json(context);
       })
     });
-
-    //game.getMatches({include: [{all: true, include: [{all: true}]}], order: 'Match.round'}).then(function (matches) {
-    //  context.matches = matches;
-    //  res.json(context);
-    //});
   });
 });
+
+
 
 module.exports = router;
