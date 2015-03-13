@@ -184,7 +184,7 @@
     
 <script id="comment_container_tpl" type="text/template">
   <div class="comment-container" id="comment-container-<%= id %>">
-    <div class="comment-attr"><%= writerName %>, commented on match / <small><%= createdAt %></small></div>
+    <div class="comment-attr"><%= writerName %>, commented on match / <small><%=new Date(createdAt).toLocaleString() %></small></div>
     <span class="comment-fn"><span class="glyphicon glyphicon-remove" comment-id="<%= id %>"></span></span></span>
     <div class="comment-content">
       <span class="comment-profile"><img class="comment-profile-img" src="<%= writerProfileImg %>"/></span>
